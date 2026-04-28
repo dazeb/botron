@@ -12,42 +12,68 @@ That's it. Everything else runs inside containers.
 ## Install
 
 ```bash
-curl -fsSL https://decepticon.red/install | bash
+git clone https://github.com/dazeb/botron.git
+cd botron
 ```
 
-This installs the `decepticon` CLI to your system.
+No installer needed — all services run in Docker. The `make` targets handle everything.
 
 ---
 
 ## Configure
 
+Create a `.env` file in the repo root with your API keys:
+
 ```bash
-decepticon onboard
+cp clients/launcher/internal/config/env.example .env
+# Edit .env — add at least one LLM provider API key
+# Set BOTRON_MODEL_PROFILE=eco (or max/test)
 ```
 
-The interactive setup wizard guides you through:
+Minimal `.env`:
 
-1. **Provider** — Anthropic, OpenAI, Google, DeepSeek, xAI, Groq, Together AI, Fireworks, or MiniMax
-2. **API Key** — Enter your provider key
-3. **Model Profile** — `eco` (balanced), `max` (performance), or `test` (development)
-4. **LangSmith** — Optional tracing for LLM observability
+```env
+# Required: at least one provider API key
+ANTHROPIC_API_KEY=sk-ant-...
+# or OPENAI_API_KEY=sk-...
+# or DEEPSEEK_API_KEY=sk-...
 
-Configuration is saved to `~/.botron/.env`. Run `decepticon onboard --reset` to reconfigure.
+# Model profile
+BOTRON_MODEL_PROFILE=eco
+
+# LiteLLM proxy (defaults work fine)
+LITELLM_MASTER_KEY=sk-botron-master
+LITELLM_SALT_KEY=sk-botron-salt
+POSTGRES_PASSWORD=botron
+NEO4J_PASSWORD=botron-graph
+```
 
 ---
 
 ## Launch
 
-**Terminal CLI** (default):
+**Start all services:**
+
 ```bash
-decepticon
+make dev
 ```
 
-Starts all services (LiteLLM, LangGraph, Neo4j, sandbox) and opens the interactive terminal UI.
+This builds and starts all services with hot-reload:
+- **LangGraph API** at `http://localhost:2024`
+- **Web Dashboard** at `http://localhost:3000`
+- **LiteLLM Proxy** at `http://localhost:4000`
 
-**Web Dashboard** (browser):
+**Open the CLI:**
 
-The web dashboard starts as part of the default stack — it's reachable at `http://localhost:3000` once `decepticon` (or `make dev` for contributors) is running.
+```bash
+make cli     # Interactive terminal UI (separate terminal)
+```
+
+Or start services without the CLI:
+
+```bash
+docker compose up -d --build
+```
 
 ---
 
@@ -56,7 +82,7 @@ The web dashboard starts as part of the default stack — it's reachable at `htt
 The demo runs a complete autonomous kill chain against a local Metasploitable 2 target — no setup needed beyond your API key.
 
 ```bash
-decepticon demo
+make demo
 ```
 
 **What happens:**
@@ -75,7 +101,7 @@ The demo is read-only — it doesn't modify anything on your host.
 
 ## First Real Engagement
 
-1. Launch Decepticon (`decepticon`) and open <http://localhost:3000>
+1. Start Botron (`make dev`) and open <http://localhost:3000>
 2. The **Soundwave** agent interviews you to define the engagement:
    - Target scope (IP range, URL, Git repo, file upload, or local path)
    - Threat actor profile
@@ -84,15 +110,15 @@ The demo is read-only — it doesn't modify anything on your host.
 4. You review and approve the OPPLAN
 5. The autonomous loop begins
 
-> **Important**: Only run Decepticon against systems you own or have explicit written authorization to test. See the disclaimer in the main README.
+> **Important**: Only run Botron against systems you own or have explicit written authorization to test. See the disclaimer in the main README.
 
 ---
 
 ## Stopping Services
 
 ```bash
-decepticon stop     # Stop all services, keep data
-make clean          # Stop + remove all volumes (resets everything)
+docker compose down      # Stop all services, keep data (volumes)
+make clean               # Stop + remove all volumes (resets everything)
 ```
 
 ---
@@ -100,10 +126,10 @@ make clean          # Stop + remove all volumes (resets everything)
 ## Check Service Status
 
 ```bash
-decepticon status        # Show running services
-decepticon logs          # Follow LangGraph logs (default)
-decepticon logs litellm  # Follow a specific service's logs
-decepticon kg-health     # Diagnose the Neo4j knowledge graph
+docker compose ps                  # Show running services
+docker compose logs -f langgraph   # Follow LangGraph logs
+docker compose logs -f litellm     # Follow LiteLLM logs
+make health                        # Run health checks on all services
 ```
 
 ---
@@ -118,4 +144,4 @@ decepticon kg-health     # Diagnose the Neo4j knowledge graph
 | Model profiles and fallback chain | [Models](models.md) |
 | Engagement workflow (RoE → Execution) | [Engagement Workflow](engagement-workflow.md) |
 | Web dashboard features | [Web Dashboard](web-dashboard.md) |
-| Contributing to Decepticon | [Contributing](contributing.md) |
+| Contributing to Botron | [Contributing](contributing.md) |
