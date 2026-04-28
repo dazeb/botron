@@ -56,8 +56,8 @@ BOTRON_MODEL_PROFILE=eco
 	if env["BOTRON_MODEL_PROFILE"] != "eco" {
 		t.Errorf("BOTRON_MODEL_PROFILE = %q, want %q", env["BOTRON_MODEL_PROFILE"], "eco")
 	}
-	if len(env) != 4 {
-		t.Errorf("len(env) = %d, want 4", len(env))
+	if len(env) != 3 {
+		t.Errorf("len(env) = %d, want 3", len(env))
 	}
 }
 
