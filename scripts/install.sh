@@ -7,7 +7,7 @@
 #
 # Environment variables:
 #   VERSION              — Install a specific version (default: latest)
-#   DECEPTICON_HOME      — Install directory (default: ~/.decepticon)
+#   BOTRON_HOME      — Install directory (default: ~/.botron)
 #   SKIP_PULL            — Skip Docker image pull (default: false)
 # ─────────────────────────────────────────────────────────────────────
 
@@ -68,7 +68,7 @@ preflight() {
 # ── Version resolution ───────────────────────────────────────────
 resolve_version() {
     if [[ -n "${VERSION:-}" ]]; then
-        DECEPTICON_VERSION="$VERSION"
+        BOTRON_VERSION="$VERSION"
         return
     fi
 
@@ -79,12 +79,12 @@ resolve_version() {
 
     if [[ -z "$latest" ]]; then
         # No releases yet — use branch
-        DECEPTICON_VERSION="latest"
+        BOTRON_VERSION="latest"
         info "No releases found, using latest from $BRANCH branch."
     else
-        DECEPTICON_VERSION="$latest"
+        BOTRON_VERSION="$latest"
         # Pin config downloads to the release tag (not the moving main branch)
-        RAW_BASE="https://raw.githubusercontent.com/$REPO/v$DECEPTICON_VERSION"
+        RAW_BASE="https://raw.githubusercontent.com/$REPO/v$BOTRON_VERSION"
     fi
 }
 
@@ -101,12 +101,12 @@ download_files() {
     if [[ ! -f "$install_dir/.env" ]]; then
         curl -fsSL "$RAW_BASE/.env.example" -o "$install_dir/.env"
         # Inject the actual install path (Docker Compose can't expand ~)
-        echo "DECEPTICON_HOME=$install_dir" >> "$install_dir/.env"
+        echo "BOTRON_HOME=$install_dir" >> "$install_dir/.env"
         info "Created .env from template. You'll need to add your API keys."
     else
-        # Ensure DECEPTICON_HOME is set in existing .env (upgrade path)
-        if ! grep -q "^DECEPTICON_HOME=" "$install_dir/.env" 2>/dev/null; then
-            echo "DECEPTICON_HOME=$install_dir" >> "$install_dir/.env"
+        # Ensure BOTRON_HOME is set in existing .env (upgrade path)
+        if ! grep -q "^BOTRON_HOME=" "$install_dir/.env" 2>/dev/null; then
+            echo "BOTRON_HOME=$install_dir" >> "$install_dir/.env"
         fi
         info ".env already exists, preserving your configuration."
     fi
@@ -119,7 +119,7 @@ download_files() {
     mkdir -p "$install_dir/workspace"
 
     # Version marker
-    echo "$DECEPTICON_VERSION" > "$install_dir/.version"
+    echo "$BOTRON_VERSION" > "$install_dir/.version"
 }
 
 # ── Download launcher binary ─────────────────────────────────────
@@ -143,9 +143,9 @@ create_launcher() {
             ;;
     esac
 
-    local binary_name="decepticon-${os}-${arch}"
+    local binary_name="botron-${os}-${arch}"
 
-    if [[ "$DECEPTICON_VERSION" == "latest" ]]; then
+    if [[ "$BOTRON_VERSION" == "latest" ]]; then
         error "Could not resolve a release version automatically."
         error "Set VERSION explicitly with a tag from:"
         error "  https://github.com/$REPO/releases"
@@ -153,21 +153,21 @@ create_launcher() {
         exit 1
     fi
 
-    local download_url="https://github.com/$REPO/releases/download/v${DECEPTICON_VERSION}/${binary_name}"
+    local download_url="https://github.com/$REPO/releases/download/v${BOTRON_VERSION}/${binary_name}"
     info "Downloading launcher binary ($binary_name)..."
-    if ! curl -fsSL "$download_url" -o "$bin_dir/decepticon" 2>/dev/null; then
-        error "No launcher binary for ${os}/${arch} in v${DECEPTICON_VERSION}."
+    if ! curl -fsSL "$download_url" -o "$bin_dir/botron" 2>/dev/null; then
+        error "No launcher binary for ${os}/${arch} in v${BOTRON_VERSION}."
         error "Supported targets: linux/amd64, linux/arm64, darwin/amd64, darwin/arm64."
         error "If you need another target, please open an issue."
         exit 1
     fi
 
-    chmod 755 "$bin_dir/decepticon"
+    chmod 755 "$bin_dir/botron"
 }
 
-# ── Detect stale `decepticon` in PATH ─────────────────────────────
+# ── Detect stale `botron` in PATH ─────────────────────────────
 # A previous install via `npm link`, manual symlink, or alternate package
-# manager can leave a `decepticon` executable elsewhere on PATH. That stale
+# manager can leave a `botron` executable elsewhere on PATH. That stale
 # entry will shadow our launcher and produce confusing errors (e.g. node
 # MODULE_NOT_FOUND). Surface the conflict so the user can clean it up.
 detect_stale_launcher() {
@@ -187,11 +187,11 @@ detect_stale_launcher() {
 
     if [[ ${#found[@]} -gt 0 ]]; then
         echo ""
-        warn "Found other 'decepticon' executable(s) on PATH:"
+        warn "Found other 'botron' executable(s) on PATH:"
         for f in "${found[@]}"; do
             echo "  $f"
         done
-        warn "These may shadow the launcher just installed at $bin_dir/decepticon."
+        warn "These may shadow the launcher just installed at $bin_dir/botron."
         echo -e "${DIM}Remove them, then run 'hash -r' or restart your shell.${NC}"
     fi
 }
@@ -222,7 +222,7 @@ setup_path() {
             local fish_config="$XDG_CONFIG_HOME/fish/config.fish"
             if [[ -f "$fish_config" ]]; then
                 if ! grep -q "$bin_dir" "$fish_config" 2>/dev/null; then
-                    echo -e "\n# decepticon" >> "$fish_config"
+                    echo -e "\n# botron" >> "$fish_config"
                     echo "fish_add_path $bin_dir" >> "$fish_config"
                     info "Added to PATH in $fish_config"
                 fi
@@ -232,7 +232,7 @@ setup_path() {
             local zshrc="${ZDOTDIR:-$HOME}/.zshrc"
             if [[ -f "$zshrc" ]] || [[ -w "$(dirname "$zshrc")" ]]; then
                 if ! grep -q "$bin_dir" "$zshrc" 2>/dev/null; then
-                    echo -e "\n# decepticon" >> "$zshrc"
+                    echo -e "\n# botron" >> "$zshrc"
                     echo "$path_export" >> "$zshrc"
                     info "Added to PATH in $zshrc"
                 fi
@@ -247,7 +247,7 @@ setup_path() {
 
             if [[ -f "$target" ]] || [[ -w "$(dirname "$target")" ]]; then
                 if ! grep -q "$bin_dir" "$target" 2>/dev/null; then
-                    echo -e "\n# decepticon" >> "$target"
+                    echo -e "\n# botron" >> "$target"
                     echo "$path_export" >> "$target"
                     info "Added to PATH in $target"
                 fi
@@ -275,7 +275,7 @@ pull_images() {
 
 # ── Main ──────────────────────────────────────────────────────────
 main() {
-    local install_dir="${DECEPTICON_HOME:-$HOME/.decepticon}"
+    local install_dir="${BOTRON_HOME:-$HOME/.botron}"
     local bin_dir="$HOME/.local/bin"
 
 
@@ -291,7 +291,7 @@ main() {
 
     mkdir -p "$install_dir"
 
-    info "Installing Decepticon $DECEPTICON_VERSION"
+    info "Installing Decepticon $BOTRON_VERSION"
     info "Directory: $install_dir"
     echo ""
 
@@ -301,7 +301,7 @@ main() {
 
     # Launcher
     create_launcher "$bin_dir" "$install_dir"
-    success "Launcher installed to $bin_dir/decepticon"
+    success "Launcher installed to $bin_dir/botron"
 
     # PATH
     setup_path "$bin_dir"
@@ -329,8 +329,8 @@ main() {
     # Reload-shell hint — always show it.
     # Two failure modes a user can hit on a fresh shell:
     #   (a) $bin_dir was just added to .bashrc/.zshrc/etc. but the current
-    #       shell hasn't sourced it yet → `decepticon` not found.
-    #   (b) The shell already has $bin_dir on PATH but a stale `decepticon`
+    #       shell hasn't sourced it yet → `botron` not found.
+    #   (b) The shell already has $bin_dir on PATH but a stale `botron`
     #       (e.g. removed npm shim) is cached in its hash table → the wrong
     #       binary is invoked or "No such file or directory" is reported.
     # Spelling both fixes out unconditionally is cheaper than diagnosing

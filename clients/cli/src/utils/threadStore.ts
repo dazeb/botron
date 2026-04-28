@@ -1,7 +1,7 @@
 /**
  * Thread persistence — query/update LangGraph threads via the SDK.
  *
- * Replaces the previous file-based storage (~/.decepticon/threads.json)
+ * Replaces the previous file-based storage (~/.botron/threads.json)
  * with server-side thread metadata, so all clients (CLI, Web) share
  * the same thread list.
  */
@@ -22,7 +22,7 @@ export interface ThreadEntry {
 const MAX_ENTRIES = 20;
 
 function getClient(): Client {
-  const apiUrl = process.env.DECEPTICON_API_URL || "http://localhost:2024";
+  const apiUrl = process.env.BOTRON_API_URL || "http://localhost:2024";
   return new Client({ apiUrl });
 }
 

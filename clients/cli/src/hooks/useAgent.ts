@@ -85,9 +85,9 @@ interface UseAgentReturn {
   isStreaming: boolean;
   pendingTool: PendingTool | null;
   streamStats: StreamStats | null;
-  /** Currently active agent name (e.g. "decepticon", "recon"). */
+  /** Currently active agent name (e.g. "botron", "recon"). */
   activeAgent: string | null;
-  /** Persistent assistant id ("soundwave" | "decepticon") — shown when no subagent is streaming. */
+  /** Persistent assistant id ("soundwave" | "botron") — shown when no subagent is streaming. */
   assistantId: string;
   /** Queued message to auto-submit on completion. */
   queuedMessage: string | null;
@@ -102,23 +102,23 @@ interface UseAgentReturn {
 
 // Initial assistant_id from the launcher's engagement picker:
 // - "soundwave" for new engagements (interview lane)
-// - "decepticon" for resuming an existing engagement
-// Defaults to "decepticon" when launched directly (legacy / dev workflows).
+// - "botron" for resuming an existing engagement
+// Defaults to "botron" when launched directly (legacy / dev workflows).
 //
 // When soundwave finishes its interview and emits the `engagement_ready`
-// custom event, the active assistant is flipped in-flight to "decepticon"
+// custom event, the active assistant is flipped in-flight to "botron"
 // and the next operator message starts a fresh thread on that assistant —
 // no CLI restart needed.
 const INITIAL_ASSISTANT_ID =
-  process.env.DECEPTICON_ASSISTANT_ID || "decepticon";
+  process.env.BOTRON_ASSISTANT_ID || "botron";
 
 export function useAgent({
-  apiUrl = process.env.DECEPTICON_API_URL || "http://localhost:2024",
+  apiUrl = process.env.BOTRON_API_URL || "http://localhost:2024",
   resumeThread = false,
 }: UseAgentOptions = {}): UseAgentReturn {
   const clientRef = useRef(new Client({ apiUrl }));
   // Thread ID priority: env var (from web terminal) > --resume flag > new thread
-  const envThreadId = process.env.DECEPTICON_THREAD_ID || null;
+  const envThreadId = process.env.BOTRON_THREAD_ID || null;
   const threadIdRef = useRef<string | null>(envThreadId ?? null);
   const resumeInitialized = useRef(false);
   const eventsRef = useRef<AgentEvent[]>([]);
@@ -148,7 +148,7 @@ export function useAgent({
   // after Command(resume=...).
   const askedQuestionIds = useRef<Set<string>>(new Set());
   // Active LangGraph assistant. Soundwave's complete_engagement_planning
-  // tool flips this to "decepticon" mid-flight; the next submit() then opens
+  // tool flips this to "botron" mid-flight; the next submit() then opens
   // a fresh thread on the new assistant.
   const assistantIdRef = useRef<string>(INITIAL_ASSISTANT_ID);
   // Slug captured from the engagement_ready event — kept for system-level
@@ -289,7 +289,7 @@ export function useAgent({
               subagent: data.agent,
               status: data.error ? "error" : "success",
             });
-            setActiveAgent("decepticon");
+            setActiveAgent("botron");
             setPendingTool(null);
             break;
 
@@ -300,8 +300,8 @@ export function useAgent({
             // message); thread handoff fires from handleStreamComplete.
             const slug = data.engagement ?? "";
             pendingHandoffRef.current = slug || "(unnamed)";
-            assistantIdRef.current = "decepticon";
-            setAssistantId("decepticon");
+            assistantIdRef.current = "botron";
+            setAssistantId("botron");
             addEvent({
               type: "system",
               content: slug
@@ -524,7 +524,7 @@ export function useAgent({
       resetStreamState();
 
       // Engagement handoff: soundwave's complete_engagement_planning tool
-      // flipped assistantIdRef to "decepticon" during this run. Drop the
+      // flipped assistantIdRef to "botron" during this run. Drop the
       // soundwave thread so the next submit opens a fresh decepticon
       // thread. Reset askedQuestionIds since they were per-thread.
       if (pendingHandoffRef.current) {
@@ -675,7 +675,7 @@ export function useAgent({
 
         setRunState("streaming");
         setPendingTool(null);
-        setActiveAgent("decepticon");
+        setActiveAgent("botron");
         setStreamStats({ startTime: Date.now(), totalTokens: 0, promptTokens: 0, completionTokens: 0 });
 
         // Engagement context flows in as regular state fields. A small
@@ -683,7 +683,7 @@ export function useAgent({
         // out of state and injects them into the model's system prompt —
         // the LangGraph-idiomatic way to surface launcher-set context to the
         // LLM without polluting user messages.
-        const slug = process.env.DECEPTICON_ENGAGEMENT;
+        const slug = process.env.BOTRON_ENGAGEMENT;
         const input: Record<string, unknown> = {
           messages: [{ role: "user", content: message }],
         };
@@ -838,7 +838,7 @@ export function useAgent({
 
           setRunState("streaming");
           setPendingTool(null);
-          setActiveAgent("decepticon");
+          setActiveAgent("botron");
           setStreamStats({ startTime: Date.now(), totalTokens: 0, promptTokens: 0, completionTokens: 0 });
 
           try {

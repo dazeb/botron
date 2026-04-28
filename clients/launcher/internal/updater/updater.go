@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
 )
 
 const (
@@ -129,7 +129,7 @@ func downloadFile(client *http.Client, url, dst string) error {
 
 // SelfUpdate downloads and replaces the current binary.
 func SelfUpdate(release *Release) error {
-	assetName := fmt.Sprintf("decepticon-%s-%s", runtime.GOOS, runtime.GOARCH)
+	assetName := fmt.Sprintf("botron-%s-%s", runtime.GOOS, runtime.GOARCH)
 
 	var downloadURL string
 	for _, asset := range release.Assets {
@@ -222,7 +222,7 @@ func CheckAndUpdate(currentVersion string, env map[string]string) bool {
 	ref := release.TagName // e.g., "v1.0.7"
 	if err := SyncConfigFiles(ref); err != nil {
 		ui.Warning("Binary updated but config sync failed: " + err.Error())
-		ui.Warning("Run 'decepticon update' to retry config sync.")
+		ui.Warning("Run 'botron update' to retry config sync.")
 		// Do not WriteVersion — leaving .version stale lets the next run
 		// retry the sync via this same code path.
 		return true

@@ -7,13 +7,13 @@ from typing import Any
 
 import pytest
 
-from decepticon.core.schemas import (
+from botron.core.schemas import (
     OPPLAN,
     Objective,
     ObjectivePhase,
     ObjectiveStatus,
 )
-from decepticon.middleware import opplan as opplan_mod
+from botron.middleware import opplan as opplan_mod
 
 
 def _objective(

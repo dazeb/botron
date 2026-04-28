@@ -16,7 +16,7 @@ Decepticon runs on two completely isolated Docker networks. Management infrastru
 └──────────┬───────────────────────────────────────────────────┘
            │                             │ Docker socket only
 ┌──────────▼──────────┐       ┌──────────▼──────────────────┐
-│   decepticon-net    │       │       sandbox-net            │
+│   botron-net    │       │       sandbox-net            │
 │                     │       │                              │
 │  LiteLLM  :4000     │       │  Sandbox (Kali Linux)        │
 │  PostgreSQL :5432   │       │  Neo4j        :7687/:7474    │
@@ -27,13 +27,13 @@ Decepticon runs on two completely isolated Docker networks. Management infrastru
    (LLM, persistence, UI)        (exploitation, C2, targets)
 ```
 
-**No cross-network access.** Services on `decepticon-net` cannot reach `sandbox-net` and vice versa. LangGraph communicates with the sandbox exclusively via the Docker socket — not the network.
+**No cross-network access.** Services on `botron-net` cannot reach `sandbox-net` and vice versa. LangGraph communicates with the sandbox exclusively via the Docker socket — not the network.
 
 ---
 
 ## Components
 
-### LiteLLM Proxy (`decepticon-net`, port 4000)
+### LiteLLM Proxy (`botron-net`, port 4000)
 
 Routes all LLM requests to Anthropic, OpenAI, and Google backends. Provides:
 - Unified API endpoint for all agents
@@ -43,7 +43,7 @@ Routes all LLM requests to Anthropic, OpenAI, and Google backends. Provides:
 
 Configuration: `config/litellm.yaml`
 
-### LangGraph Platform (`decepticon-net`, port 2024)
+### LangGraph Platform (`botron-net`, port 2024)
 
 Hosts and orchestrates all agents. Provides:
 - Agent lifecycle management (spawn, execute, terminate)
@@ -51,7 +51,7 @@ Hosts and orchestrates all agents. Provides:
 - State persistence between agent runs
 - The LangGraph SDK endpoint consumed by both CLI and Web Dashboard
 
-### PostgreSQL (`decepticon-net`, port 5432)
+### PostgreSQL (`botron-net`, port 5432)
 
 Persistent relational storage for:
 - Engagement records
@@ -90,7 +90,7 @@ Sliver team server runs alongside the sandbox on the operational network. Featur
 
 Activated via `COMPOSE_PROFILES=c2-sliver` (default). Future profiles: `c2-havoc`.
 
-### Web Dashboard (`decepticon-net`, port 3000)
+### Web Dashboard (`botron-net`, port 3000)
 
 Next.js 16 application providing a browser-based control plane. See [Web Dashboard](web-dashboard.md).
 
@@ -156,5 +156,5 @@ Orchestrator reads OPPLAN
 | Sandbox ↔ Management | Separate Docker networks, no routing |
 | LangGraph ↔ Sandbox | Docker socket only (no network port) |
 | Agent commands | `SafeCommandMiddleware` blocks destructive ops |
-| Credential isolation | API keys live on `decepticon-net`; sandbox never sees them |
+| Credential isolation | API keys live on `botron-net`; sandbox never sees them |
 | Host isolation | All commands run inside Docker; no host filesystem access |

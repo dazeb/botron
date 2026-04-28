@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from decepticon.tools.research import tools as research_tools
-from decepticon.tools.research.graph import KnowledgeGraph, NodeKind
+from botron.tools.research import tools as research_tools
+from botron.tools.research.graph import KnowledgeGraph, NodeKind
 
 
 class _FakeStore:
@@ -48,7 +48,7 @@ class _FakeStore:
 
 
 def _configure_kg(monkeypatch, tmp_path):
-    from decepticon.tools.research import _state as state
+    from botron.tools.research import _state as state
 
     fake = _FakeStore()
     monkeypatch.setattr(state, "_store", fake)

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-from decepticon.backends.defense import DockerDefenseBackend
-from decepticon.schemas.defense_brief import (
+from botron.backends.defense import DockerDefenseBackend
+from botron.schemas.defense_brief import (
     DefenseActionResult,
     DefenseActionType,
     DefenseRecommendation,

@@ -5,15 +5,15 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	t.Setenv("DECEPTICON_HOME", "/tmp/test-decepticon")
+	t.Setenv("BOTRON_HOME", "/tmp/test-botron")
 	c := New()
-	if c.Home != "/tmp/test-decepticon" {
-		t.Errorf("Home = %q, want /tmp/test-decepticon", c.Home)
+	if c.Home != "/tmp/test-botron" {
+		t.Errorf("Home = %q, want /tmp/test-botron", c.Home)
 	}
-	if c.ComposeFile != "/tmp/test-decepticon/docker-compose.yml" {
+	if c.ComposeFile != "/tmp/test-botron/docker-compose.yml" {
 		t.Errorf("ComposeFile = %q", c.ComposeFile)
 	}
-	if c.EnvFile != "/tmp/test-decepticon/.env" {
+	if c.EnvFile != "/tmp/test-botron/.env" {
 		t.Errorf("EnvFile = %q", c.EnvFile)
 	}
 }

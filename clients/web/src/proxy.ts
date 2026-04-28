@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // OSS mode: no auth required. Edition check must use NEXT_PUBLIC_*
 // because this proxy runs in Edge Runtime (no Node runtime access).
-const IS_EE = process.env.NEXT_PUBLIC_DECEPTICON_EDITION === "ee";
+const IS_EE = process.env.NEXT_PUBLIC_BOTRON_EDITION === "ee";
 
 export default function proxy(req: NextRequest) {
   // OSS mode: skip all auth redirects — no login required.

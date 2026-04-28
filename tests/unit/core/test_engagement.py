@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from decepticon.core.engagement import (
+from botron.core.engagement import (
     EngagementConfig,
     EngagementPhase,
     EngagementState,

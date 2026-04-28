@@ -17,7 +17,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.8.15 /uv /usr/local/bin/uv
 
 # Copy project files
 COPY pyproject.toml langgraph.json README.md ./
-COPY decepticon/ decepticon/
+COPY botron/ botron/
 COPY skills/ skills/
 
 # Install Python dependencies (editable — synced source changes via docker compose watch

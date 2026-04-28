@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from decepticon.tools.research.fuzz import (
+from botron.tools.research.fuzz import (
     Crash,
     Engine,
     classify_target,
@@ -14,7 +14,7 @@ from decepticon.tools.research.fuzz import (
     parse_asan,
     record_crash,
 )
-from decepticon.tools.research.graph import KnowledgeGraph, NodeKind, Severity
+from botron.tools.research.graph import KnowledgeGraph, NodeKind, Severity
 
 
 class TestClassifyTarget:

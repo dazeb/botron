@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
 )
 
 const (
@@ -37,23 +37,23 @@ var (
 )
 
 // CheckLangGraph polls /assistants/search until the response references the
-// decepticon assistant. Compose's healthcheck only verifies that /ok serves;
+// botron assistant. Compose's healthcheck only verifies that /ok serves;
 // graph compilation can still be in progress, so this functional probe is the
 // only signal that the agent is actually callable.
 //
-// DECEPTICON_STARTUP_TIMEOUT_SECONDS overrides LangGraphTimeout for slow
+// BOTRON_STARTUP_TIMEOUT_SECONDS overrides LangGraphTimeout for slow
 // environments where graph compile is the long pole.
 func CheckLangGraph(env map[string]string) error {
 	port := config.Get(env, "LANGGRAPH_PORT", DefaultLangGraphPort)
 	url := fmt.Sprintf("http://localhost:%s/assistants/search", port)
 
 	body, _ := json.Marshal(map[string]any{
-		"graph_id": "decepticon",
+		"graph_id": "botron",
 		"limit":    1,
 	})
 
 	timeout := LangGraphTimeout
-	if v := os.Getenv("DECEPTICON_STARTUP_TIMEOUT_SECONDS"); v != "" {
+	if v := os.Getenv("BOTRON_STARTUP_TIMEOUT_SECONDS"); v != "" {
 		if n, err := strconv.Atoi(v); err == nil && n > 0 {
 			timeout = time.Duration(n) * time.Second
 		}
@@ -67,7 +67,7 @@ func CheckLangGraph(env map[string]string) error {
 			if resp.StatusCode == http.StatusOK {
 				respBody, _ := io.ReadAll(resp.Body)
 				resp.Body.Close()
-				if bytes.Contains(respBody, []byte(`"decepticon"`)) {
+				if bytes.Contains(respBody, []byte(`"botron"`)) {
 					return nil
 				}
 			} else {
@@ -152,7 +152,7 @@ func CheckWeb(env map[string]string) error {
 // web) is delegated to Docker Compose healthchecks via `compose up --wait`,
 // so by the time this runs every container is already healthy. The remaining
 // gap is graph-compile readiness inside LangGraph: /ok answers before the
-// decepticon graph finishes compiling, so we probe /assistants/search until
+// botron graph finishes compiling, so we probe /assistants/search until
 // the assistant is registered.
 func WaitForServices(env map[string]string) error {
 	ui.Info("Verifying agent stack...")

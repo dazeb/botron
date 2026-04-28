@@ -103,7 +103,7 @@ Decepticon reads an OPPLAN and pursues objectives through whatever path opens up
 Real offensive tools are interactive — `msfconsole`, `sliver-client`, `evil-winrm`. Most AI agents fire one-shot commands and give up. Decepticon runs every command inside persistent tmux sessions with automatic prompt detection. When a tool drops you into an interactive prompt, the agent sends follow-up commands. No workarounds.
 
 **Real infrastructure isolation.**
-All commands run inside a hardened Kali Linux sandbox on a dedicated operational network (`sandbox-net`), fully isolated from management (`decepticon-net`). LLM gateway, databases, and agent API live on one network; sandbox, C2 server, and targets live on another. Zero cross-network access. The agent controls the sandbox via Docker socket only.
+All commands run inside a hardened Kali Linux sandbox on a dedicated operational network (`sandbox-net`), fully isolated from management (`botron-net`). LLM gateway, databases, and agent API live on one network; sandbox, C2 server, and targets live on another. Zero cross-network access. The agent controls the sandbox via Docker socket only.
 
 **Offense serves defense.**
 The [Offensive Vaccine](docs/offensive-vaccine.md) loop turns every finding into a defense improvement — automatically. Attack → defend → verify, at machine speed. This is Step 1 toward infrastructure that hardens itself.
@@ -151,7 +151,7 @@ Three profiles via LiteLLM proxy. Each role has a primary model and automatic fa
 | **max** | Opus 4.6 | Opus 4.6 | Sonnet 4.6 | High-value targets |
 | **test** | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | Development / CI |
 
-Set via `DECEPTICON_MODEL_PROFILE=eco` in your `.env`. Provider outage or rate limit → seamless fallback.
+Set via `BOTRON_MODEL_PROFILE=eco` in your `.env`. Provider outage or rate limit → seamless fallback.
 
 → **[Full model reference](docs/models.md)**
 

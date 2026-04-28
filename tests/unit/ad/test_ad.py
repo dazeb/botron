@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from decepticon.tools.ad.adcs import analyze_adcs_templates
-from decepticon.tools.ad.bloodhound import merge_bloodhound_json
-from decepticon.tools.ad.dcsync import dcsync_candidates
-from decepticon.tools.ad.kerberos import classify_hashcat_hash, parse_ticket
-from decepticon.tools.research.graph import KnowledgeGraph
+from botron.tools.ad.adcs import analyze_adcs_templates
+from botron.tools.ad.bloodhound import merge_bloodhound_json
+from botron.tools.ad.dcsync import dcsync_candidates
+from botron.tools.ad.kerberos import classify_hashcat_hash, parse_ticket
+from botron.tools.research.graph import KnowledgeGraph
 
 
 class TestBloodHoundIngest:

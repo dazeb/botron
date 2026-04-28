@@ -13,8 +13,8 @@ from typing import Any
 
 import pytest
 
-from decepticon.tools.references import hydrate
-from decepticon.tools.references.fetch import ReferenceCache
+from botron.tools.references import hydrate
+from botron.tools.references.fetch import ReferenceCache
 
 
 @pytest.fixture

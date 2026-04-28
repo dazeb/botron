@@ -3,7 +3,6 @@ package config
 import (
 	"bufio"
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,7 +13,7 @@ import (
 var EnvTemplate string
 
 const (
-	DefaultHome       = ".decepticon"
+	DefaultHome       = ".botron"
 	EnvFileName       = ".env"
 	EnvExampleName    = ".env.example"
 	PlaceholderSuffix = "-key-here"
@@ -26,9 +25,9 @@ type Config struct {
 	Env  map[string]string
 }
 
-// DecepticonHome returns the resolved DECEPTICON_HOME path.
+// DecepticonHome returns the resolved BOTRON_HOME path.
 func DecepticonHome() string {
-	if h := os.Getenv("DECEPTICON_HOME"); h != "" {
+	if h := os.Getenv("BOTRON_HOME"); h != "" {
 		return h
 	}
 	home, err := os.UserHomeDir()
@@ -206,78 +205,15 @@ func ValidateAPIKeys(env map[string]string) error {
 			msg.WriteString(fmt.Sprintf("\n  %s: %s", name, reason))
 		}
 	}
-	msg.WriteString("\nRun 'decepticon onboard --reset' to reconfigure credentials.")
+	msg.WriteString("\nRun 'botron onboard --reset' to reconfigure credentials.")
 	return fmt.Errorf("%s", msg.String())
 }
 
-// ValidateAuth ensures authentication is configured for the chosen provider mode.
-// "api" mode → at least one well-formed API key must be set.
-// "auth" mode → Claude Code credentials file must exist (LiteLLM mounts it read-only).
+// ValidateAuth ensures at least one well-formed API key is set.
 func ValidateAuth(env map[string]string) error {
-	mode := Get(env, "DECEPTICON_MODEL_PROVIDER", "api")
-	switch mode {
-	case "api":
-		return ValidateAPIKeys(env)
-	case "auth":
-		return validateClaudeCredentials()
-	default:
-		return fmt.Errorf("unknown DECEPTICON_MODEL_PROVIDER: %q (expected 'api' or 'auth')", mode)
-	}
+	return ValidateAPIKeys(env)
 }
 
-// validateClaudeCredentials verifies ~/.claude/.credentials.json exists, is a regular
-// file, parses as JSON, and carries an access token in one of the shapes the LiteLLM
-// claude_code_handler accepts (claudeAiOauth.accessToken, top-level accessToken, or
-// legacy oauthToken). Compose mounts this path into the LiteLLM container; if it's
-// missing or empty, authentication fails opaquely on the first prompt instead of here.
-func validateClaudeCredentials() error {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("locate home directory: %w", err)
-	}
-	path := filepath.Join(home, ".claude", ".credentials.json")
-	info, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		return fmt.Errorf("Claude Code credentials not found at %s\nRun 'claude /login' (Claude Code CLI) to authenticate, then retry.", path)
-	}
-	if err != nil {
-		return fmt.Errorf("stat %s: %w", path, err)
-	}
-	if info.IsDir() {
-		return fmt.Errorf("expected credentials file at %s but found a directory.\nRemove it and run 'claude /login' to re-authenticate.", path)
-	}
-
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return fmt.Errorf("read %s: %w\nCheck file permissions and re-run.", path, err)
-	}
-	var creds map[string]any
-	if err := json.Unmarshal(raw, &creds); err != nil {
-		return fmt.Errorf("credentials file at %s is not valid JSON: %w\nRun 'claude /login' to re-authenticate.", path, err)
-	}
-	if extractClaudeAccessToken(creds) == "" {
-		return fmt.Errorf("no access token found in %s\nRun 'claude /login' to re-authenticate.", path)
-	}
-	return nil
-}
-
-// extractClaudeAccessToken walks the credentials JSON in the same resolution order as
-// the LiteLLM handler (config/claude_code_handler.py): current nested format first,
-// then legacy top-level keys. Returns "" if no usable token is present.
-func extractClaudeAccessToken(creds map[string]any) string {
-	if oauth, ok := creds["claudeAiOauth"].(map[string]any); ok {
-		if tok, _ := oauth["accessToken"].(string); tok != "" {
-			return tok
-		}
-	}
-	if tok, _ := creds["accessToken"].(string); tok != "" {
-		return tok
-	}
-	if tok, _ := creds["oauthToken"].(string); tok != "" {
-		return tok
-	}
-	return ""
-}
 
 // AppendEnvLine appends a KEY=VALUE line to an existing .env file.
 func AppendEnvLine(path, key, value string) error {

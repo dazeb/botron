@@ -37,10 +37,9 @@ func TestLoadEnv(t *testing.T) {
 	content := `# Comment
 ANTHROPIC_API_KEY=sk-ant-real-key
 OPENAI_API_KEY=your-openai-key-here
-DECEPTICON_MODEL_PROFILE=eco
+BOTRON_MODEL_PROFILE=eco
 
 # Another comment
-DECEPTICON_MODEL_PROVIDER=api
 `
 	if err := os.WriteFile(envFile, []byte(content), 0o644); err != nil {
 		t.Fatal(err)
@@ -54,8 +53,8 @@ DECEPTICON_MODEL_PROVIDER=api
 	if env["ANTHROPIC_API_KEY"] != "sk-ant-real-key" {
 		t.Errorf("ANTHROPIC_API_KEY = %q, want %q", env["ANTHROPIC_API_KEY"], "sk-ant-real-key")
 	}
-	if env["DECEPTICON_MODEL_PROFILE"] != "eco" {
-		t.Errorf("DECEPTICON_MODEL_PROFILE = %q, want %q", env["DECEPTICON_MODEL_PROFILE"], "eco")
+	if env["BOTRON_MODEL_PROFILE"] != "eco" {
+		t.Errorf("BOTRON_MODEL_PROFILE = %q, want %q", env["BOTRON_MODEL_PROFILE"], "eco")
 	}
 	if len(env) != 4 {
 		t.Errorf("len(env) = %d, want 4", len(env))
@@ -117,72 +116,6 @@ func TestValidateAPIKeys_RejectsBadFormat(t *testing.T) {
 	}
 }
 
-func TestValidateAuth_AuthMode(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
-	env := map[string]string{"DECEPTICON_MODEL_PROVIDER": "auth"}
-
-	// auth mode without credentials file → error
-	if err := ValidateAuth(env); err == nil {
-		t.Error("expected error when ~/.claude/.credentials.json is missing")
-	}
-
-	credDir := filepath.Join(home, ".claude")
-	if err := os.MkdirAll(credDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	credPath := filepath.Join(credDir, ".credentials.json")
-
-	// malformed JSON → error
-	if err := os.WriteFile(credPath, []byte("not-json"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := ValidateAuth(env); err == nil {
-		t.Error("expected error for malformed credentials JSON")
-	}
-
-	// valid JSON but no access token → error
-	if err := os.WriteFile(credPath, []byte("{}"), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := ValidateAuth(env); err == nil {
-		t.Error("expected error when credentials JSON has no access token")
-	}
-
-	// current nested format (claudeAiOauth.accessToken) → ok
-	current := `{"claudeAiOauth":{"accessToken":"sk-ant-oat01-test-token-of-sufficient-length"}}`
-	if err := os.WriteFile(credPath, []byte(current), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := ValidateAuth(env); err != nil {
-		t.Errorf("unexpected error for current format: %v", err)
-	}
-
-	// legacy top-level accessToken → ok
-	legacy := `{"accessToken":"sk-ant-oat01-legacy-token"}`
-	if err := os.WriteFile(credPath, []byte(legacy), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := ValidateAuth(env); err != nil {
-		t.Errorf("unexpected error for legacy accessToken format: %v", err)
-	}
-
-	// legacy oauthToken → ok
-	legacyOAuth := `{"oauthToken":"sk-ant-oat01-emulator-token"}`
-	if err := os.WriteFile(credPath, []byte(legacyOAuth), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if err := ValidateAuth(env); err != nil {
-		t.Errorf("unexpected error for legacy oauthToken format: %v", err)
-	}
-}
-
-func TestValidateAuth_UnknownMode(t *testing.T) {
-	env := map[string]string{"DECEPTICON_MODEL_PROVIDER": "telepathy"}
-	if err := ValidateAuth(env); err == nil {
-		t.Error("expected error for unknown provider mode")
-	}
-}
 
 func TestWriteEnv(t *testing.T) {
 	dir := t.TempDir()
@@ -192,7 +125,7 @@ func TestWriteEnv(t *testing.T) {
 	template := `# Config
 ANTHROPIC_API_KEY=your-anthropic-key-here
 OPENAI_API_KEY=your-openai-key-here
-DECEPTICON_MODEL_PROFILE=eco
+BOTRON_MODEL_PROFILE=eco
 `
 	if err := os.WriteFile(tmplPath, []byte(template), 0o644); err != nil {
 		t.Fatal(err)
@@ -200,7 +133,7 @@ DECEPTICON_MODEL_PROFILE=eco
 
 	values := map[string]string{
 		"ANTHROPIC_API_KEY":       "sk-real-key",
-		"DECEPTICON_MODEL_PROFILE": "max",
+		"BOTRON_MODEL_PROFILE": "max",
 	}
 
 	if err := WriteEnv(tmplPath, outPath, values); err != nil {
@@ -218,20 +151,20 @@ DECEPTICON_MODEL_PROFILE=eco
 	if env["OPENAI_API_KEY"] != "your-openai-key-here" {
 		t.Errorf("OPENAI_API_KEY should stay as template value")
 	}
-	if env["DECEPTICON_MODEL_PROFILE"] != "max" {
-		t.Errorf("DECEPTICON_MODEL_PROFILE = %q, want %q", env["DECEPTICON_MODEL_PROFILE"], "max")
+	if env["BOTRON_MODEL_PROFILE"] != "max" {
+		t.Errorf("BOTRON_MODEL_PROFILE = %q, want %q", env["BOTRON_MODEL_PROFILE"], "max")
 	}
 }
 
 func TestDecepticonHome(t *testing.T) {
-	// With DECEPTICON_HOME set
-	t.Setenv("DECEPTICON_HOME", "/custom/path")
+	// With BOTRON_HOME set
+	t.Setenv("BOTRON_HOME", "/custom/path")
 	if got := DecepticonHome(); got != "/custom/path" {
 		t.Errorf("DecepticonHome() = %q, want /custom/path", got)
 	}
 
-	// Without DECEPTICON_HOME — falls back to ~/.decepticon
-	t.Setenv("DECEPTICON_HOME", "")
+	// Without BOTRON_HOME — falls back to ~/.botron
+	t.Setenv("BOTRON_HOME", "")
 	home := DecepticonHome()
 	if !filepath.IsAbs(home) {
 		t.Errorf("DecepticonHome() = %q, want absolute path", home)

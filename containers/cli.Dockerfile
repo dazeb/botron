@@ -6,12 +6,12 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY clients/cli/package.json clients/cli/
 COPY clients/shared/streaming/package.json clients/shared/streaming/
-RUN npm ci --workspace=@decepticon/cli
+RUN npm ci --workspace=@botron/cli
 
 # Copy CLI and shared source and build
 COPY clients/shared/ clients/shared/
 COPY clients/cli/ clients/cli/
-RUN npm run build --workspace=@decepticon/cli
+RUN npm run build --workspace=@botron/cli
 
 # ── Stage 2: Runtime ──────────────────────────────────────────────
 FROM node:24-slim
@@ -26,7 +26,7 @@ COPY --from=builder /app/clients/shared ./clients/shared
 # tsx runs src/ directly — dist/ is not used at runtime
 COPY --from=builder /app/clients/cli/src ./src
 
-ENV DECEPTICON_API_URL=http://langgraph:2024
+ENV BOTRON_API_URL=http://langgraph:2024
 ENV NODE_ENV=production
 
 # No HEALTHCHECK — CLI is an interactive TTY app with no HTTP surface.

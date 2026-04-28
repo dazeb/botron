@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/compose"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/engagement"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/health"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/updater"
+	"github.com/dazeb/botron/clients/launcher/internal/compose"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/engagement"
+	"github.com/dazeb/botron/clients/launcher/internal/health"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/updater"
 	"github.com/spf13/cobra"
 )
 
@@ -58,7 +58,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 		// Use installed version tag; fall back to branch for dev builds
 		ref := "v" + version
 		if version == "dev" || version == "" {
-			ref = config.Get(env, "DECEPTICON_BRANCH", "main")
+			ref = config.Get(env, "BOTRON_BRANCH", "main")
 		}
 		ui.Info("Downloading configuration files...")
 		if err := updater.SyncConfigFiles(ref); err != nil {
@@ -69,11 +69,11 @@ func runStart(cmd *cobra.Command, args []string) error {
 	// Ensure workspace directory exists
 	_ = os.MkdirAll(filepath.Join(home, "workspace"), 0o755)
 
-	// Ensure DECEPTICON_HOME is set in .env (Docker Compose needs absolute path)
-	if config.Get(env, "DECEPTICON_HOME", "") == "" {
-		env["DECEPTICON_HOME"] = home
-		if err := config.AppendEnvLine(config.EnvPath(), "DECEPTICON_HOME", home); err != nil {
-			ui.Warning("Could not set DECEPTICON_HOME in .env: " + err.Error())
+	// Ensure BOTRON_HOME is set in .env (Docker Compose needs absolute path)
+	if config.Get(env, "BOTRON_HOME", "") == "" {
+		env["BOTRON_HOME"] = home
+		if err := config.AppendEnvLine(config.EnvPath(), "BOTRON_HOME", home); err != nil {
+			ui.Warning("Could not set BOTRON_HOME in .env: " + err.Error())
 		}
 	}
 
@@ -93,8 +93,8 @@ func runStart(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	// Export the bind path. composeEnv() forwards os.Environ(), so docker
-	// compose interpolates ${DECEPTICON_ENGAGEMENT_WORKSPACE} from this var.
-	if err := os.Setenv("DECEPTICON_ENGAGEMENT_WORKSPACE", choice.WorkspacePath); err != nil {
+	// compose interpolates ${BOTRON_ENGAGEMENT_WORKSPACE} from this var.
+	if err := os.Setenv("BOTRON_ENGAGEMENT_WORKSPACE", choice.WorkspacePath); err != nil {
 		return fmt.Errorf("set engagement workspace env: %w", err)
 	}
 
@@ -116,16 +116,16 @@ func runStart(cmd *cobra.Command, args []string) error {
 	ui.Info("Launching Decepticon CLI...")
 
 	cliEnv := map[string]string{
-		"DECEPTICON_VERSION":      version,
-		"DECEPTICON_ASSISTANT_ID": choice.AssistantID,
-		"DECEPTICON_ENGAGEMENT":   choice.Engagement,
+		"BOTRON_VERSION":      version,
+		"BOTRON_ASSISTANT_ID": choice.AssistantID,
+		"BOTRON_ENGAGEMENT":   choice.Engagement,
 	}
 	if port := config.Get(env, "WEB_PORT", "3000"); port != "" {
 		cliEnv["WEB_PORT"] = port
 	}
 
 	// Pass through terminal. Services are intentionally left running on CLI exit
-	// so re-entry is fast (cold start is ~75s); use 'decepticon stop' to shut
+	// so re-entry is fast (cold start is ~75s); use 'botron stop' to shut
 	// the stack down.
 	if err := c.RunInteractive(
 		[]string{compose.Profiles.CLI},
@@ -135,7 +135,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("CLI exited: %w", err)
 	}
 
-	ui.DimText("CLI exited. Services kept running — run 'decepticon stop' to shut down.")
+	ui.DimText("CLI exited. Services kept running — run 'botron stop' to shut down.")
 	return nil
 }
 

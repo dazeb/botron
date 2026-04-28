@@ -16,7 +16,7 @@ from typing import Any
 import pytest
 from langchain_core.messages import AIMessage, HumanMessage
 
-from decepticon.core.subagent_streaming import (
+from botron.core.subagent_streaming import (
     StreamingRunnable,
     clear_subagent_renderer,
     set_subagent_renderer,

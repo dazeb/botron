@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from decepticon.orchestrator import OrchestratorPhase, OrchestratorState, VaccineOrchestrator
-from decepticon.schemas.defense_brief import (
+from botron.orchestrator import OrchestratorPhase, OrchestratorState, VaccineOrchestrator
+from botron.schemas.defense_brief import (
     DefenseActionResult,
     DefenseActionType,
     ReAttackOutcome,

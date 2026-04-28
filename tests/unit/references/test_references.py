@@ -7,20 +7,20 @@ from types import SimpleNamespace
 
 import pytest
 
-from decepticon.tools.references import fetch as fetch_mod
-from decepticon.tools.references.catalog import (
+from botron.tools.references import fetch as fetch_mod
+from botron.tools.references.catalog import (
     REFERENCES,
     references_by_category,
     references_for_topic,
     suggest_for_finding,
 )
-from decepticon.tools.references.fetch import (
+from botron.tools.references.fetch import (
     cache_path,
     cache_status,
     ensure_cached,
     search_cache,
 )
-from decepticon.tools.references.payloads import (
+from botron.tools.references.payloads import (
     BUNDLED_PAYLOADS,
     payloads_by_class,
     search_payloads,

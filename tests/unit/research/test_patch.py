@@ -7,14 +7,14 @@ from pathlib import Path
 
 import pytest
 
-from decepticon.tools.research.graph import (
+from botron.tools.research.graph import (
     EdgeKind,
     KnowledgeGraph,
     Node,
     NodeKind,
     Severity,
 )
-from decepticon.tools.research.patch import patch_propose, patch_verify
+from botron.tools.research.patch import patch_propose, patch_verify
 
 
 class _FakeStore:
@@ -55,7 +55,7 @@ class _FakeStore:
 
 def _configure_kg(monkeypatch):
     fake = _FakeStore()
-    monkeypatch.setattr("decepticon.tools.research._state._store", fake)
+    monkeypatch.setattr("botron.tools.research._state._store", fake)
     return fake
 
 
@@ -176,7 +176,7 @@ class TestPatchVerify:
         sandbox = FakeSandbox(scripts=[("all good, no sql error", 0)])
         import importlib
 
-        bash_mod = importlib.import_module("decepticon.tools.bash.bash")
+        bash_mod = importlib.import_module("botron.tools.bash.bash")
         monkeypatch.setattr(bash_mod, "_sandbox", sandbox)
 
         raw = await patch_verify.ainvoke(
@@ -215,7 +215,7 @@ class TestPatchVerify:
         sandbox = FakeSandbox(scripts=[("sql syntax error near quote", 1)])
         import importlib
 
-        bash_mod = importlib.import_module("decepticon.tools.bash.bash")
+        bash_mod = importlib.import_module("botron.tools.bash.bash")
         monkeypatch.setattr(bash_mod, "_sandbox", sandbox)
 
         raw = await patch_verify.ainvoke(
@@ -250,7 +250,7 @@ class TestPatchVerify:
         sandbox = FakeSandbox(scripts=[("FAILED 3 tests", 1), ("should not run", 0)])
         import importlib
 
-        bash_mod = importlib.import_module("decepticon.tools.bash.bash")
+        bash_mod = importlib.import_module("botron.tools.bash.bash")
         monkeypatch.setattr(bash_mod, "_sandbox", sandbox)
 
         raw = await patch_verify.ainvoke(

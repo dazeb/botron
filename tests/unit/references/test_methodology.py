@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from decepticon.tools.references.methodology import (
+from botron.tools.references.methodology import (
     classes_present,
     classify_filename,
     load_chapters,

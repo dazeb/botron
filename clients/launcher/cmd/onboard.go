@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"charm.land/huh/v2"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -25,12 +25,11 @@ func init() {
 func runOnboard(cmd *cobra.Command, args []string) error {
 	if config.EnvExists() && !resetFlag {
 		ui.Info(".env already configured at " + config.EnvPath())
-		ui.DimText("Run 'decepticon onboard --reset' to reconfigure")
+		ui.DimText("Run 'botron onboard --reset' to reconfigure")
 		return nil
 	}
 
 	var (
-		authMethod   string
 		llmProvider  string
 		apiKey       string
 		profile      string
@@ -43,43 +42,27 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 		huh.NewGroup(
 			huh.NewNote().
 				Title("Decepticon Setup").
-				Description("Configure authentication, LLM provider,\nmodel profile, and observability.\n\nUse ↑↓ to navigate, Enter to confirm."),
+				Description("Configure LLM provider,\nmodel profile, and observability.\n\nUse ↑↓ to navigate, Enter to confirm."),
 		),
 
-		// Step 1: Authentication method
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("Authentication Method").
-				Description("How should Decepticon authenticate with LLM providers?").
-				Options(
-					huh.NewOption("API Key — Direct API access via x-api-key header", "api"),
-					huh.NewOption("OAuth  — Subscription-based (Claude Code, Codex)", "auth"),
-				).
-				Value(&authMethod),
-		).Title("1 / 5  ·  Authentication").
-			Description("Choose how to connect to LLM services"),
-
-		// Step 2: Provider selection
+		// Step 1: Provider selection
 		huh.NewGroup(
 			huh.NewSelect[string]().
 				Title("LLM Provider").
-				Description("Which provider will power the agents?").
-				OptionsFunc(func() []huh.Option[string] {
-					if authMethod == "auth" {
-						return []huh.Option[string]{
-							huh.NewOption("Claude Code  — Anthropic OAuth", "claude-code"),
-							huh.NewOption("Codex        — coming soon", "codex"),
-						}
-					}
-					return []huh.Option[string]{
-						huh.NewOption("Anthropic  — Claude Opus / Sonnet / Haiku", "anthropic"),
-						huh.NewOption("OpenAI     — GPT-5.4 / GPT-4.1", "openai"),
-						huh.NewOption("Google     — Gemini 2.5 Flash", "google"),
-						huh.NewOption("MiniMax    — M2.7", "minimax"),
-					}
-				}, &authMethod).
+				Description("Which provider will power the agents? (LiteLLM multi-provider routing)").
+				Options(
+					huh.NewOption("Anthropic    — Claude Opus / Sonnet / Haiku", "anthropic"),
+					huh.NewOption("OpenAI       — GPT-5.4 / GPT-4.1", "openai"),
+					huh.NewOption("Google       — Gemini 2.5 Flash", "google"),
+					huh.NewOption("DeepSeek     — DeepSeek-Chat / Reasoner", "deepseek"),
+					huh.NewOption("xAI          — Grok-4 / Grok-4-Mini", "xai"),
+					huh.NewOption("Groq         — Llama 3.3 70B / Mixtral", "groq"),
+					huh.NewOption("Together AI  — Llama 4 Maverick / DeepSeek-V3", "together"),
+					huh.NewOption("Fireworks    — Llama 3.1 70B", "fireworks"),
+					huh.NewOption("MiniMax      — M2.7", "minimax"),
+				).
 				Value(&llmProvider),
-		).Title("2 / 5  ·  Provider").
+		).Title("1 / 4  ·  Provider").
 			Description("Select your primary LLM provider"),
 
 		// Step 3: API key input (only for api mode)
@@ -93,6 +76,16 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 						return "OpenAI API Key"
 					case "google":
 						return "Google API Key"
+					case "deepseek":
+						return "DeepSeek API Key"
+					case "xai":
+						return "xAI API Key"
+					case "groq":
+						return "Groq API Key"
+					case "together":
+						return "Together AI API Key"
+					case "fireworks":
+						return "Fireworks API Key"
 					case "minimax":
 						return "MiniMax API Key"
 					}
@@ -106,6 +99,16 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 						return "sk-..."
 					case "google":
 						return "AIza..."
+					case "deepseek":
+						return "sk-..."
+					case "xai":
+						return "xai-..."
+					case "groq":
+						return "gsk_..."
+					case "together":
+						return "..."
+					case "fireworks":
+						return "fw_..."
 					case "minimax":
 						return "eyJ..."
 					}
@@ -119,11 +122,9 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 					}
 					return nil
 				}),
-		).Title("3 / 5  ·  Credentials").
-			Description("Enter your provider API key").
-			WithHideFunc(func() bool {
-				return authMethod == "auth"
-			}),
+		).Title("2 / 4  ·  Credentials").
+			Description("Enter your provider API key"),
+
 
 		// Step 4: Model profile
 		huh.NewGroup(
@@ -136,7 +137,7 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 					huh.NewOption("test — Haiku only (for development)", "test"),
 				).
 				Value(&profile),
-		).Title("4 / 5  ·  Performance").
+		).Title("3 / 4  ·  Performance").
 			Description("Balance between cost and capability"),
 
 		// Step 5: LangSmith tracing
@@ -147,7 +148,7 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 				Affirmative("Yes").
 				Negative("No").
 				Value(&useLangSmith),
-		).Title("5 / 5  ·  Observability").
+		).Title("4 / 4  ·  Observability").
 			Description("Optional tracing integration"),
 
 		// LangSmith API key (only when enabled)
@@ -163,7 +164,7 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 					}
 					return nil
 				}),
-		).Title("5 / 5  ·  Observability").
+		).Title("4 / 4  ·  Observability").
 			Description("Enter your LangSmith credentials").
 			WithHideFunc(func() bool {
 				return !useLangSmith
@@ -176,11 +177,10 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 
 	// Build values map
 	values := map[string]string{
-		"DECEPTICON_MODEL_PROFILE":  profile,
-		"DECEPTICON_MODEL_PROVIDER": authMethod,
+		"BOTRON_MODEL_PROFILE": profile,
 	}
 
-	if authMethod == "api" && apiKey != "" {
+	if apiKey != "" {
 		switch llmProvider {
 		case "anthropic":
 			values["ANTHROPIC_API_KEY"] = apiKey
@@ -188,6 +188,16 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 			values["OPENAI_API_KEY"] = apiKey
 		case "google":
 			values["GOOGLE_API_KEY"] = apiKey
+		case "deepseek":
+			values["DEEPSEEK_API_KEY"] = apiKey
+		case "xai":
+			values["XAI_API_KEY"] = apiKey
+		case "groq":
+			values["GROQ_API_KEY"] = apiKey
+		case "together":
+			values["TOGETHER_API_KEY"] = apiKey
+		case "fireworks":
+			values["FIREWORKS_API_KEY"] = apiKey
 		case "minimax":
 			values["MINIMAX_API_KEY"] = apiKey
 		}
@@ -196,7 +206,7 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 	if useLangSmith && langSmithKey != "" {
 		values["LANGSMITH_TRACING"] = "true"
 		values["LANGSMITH_API_KEY"] = langSmithKey
-		values["LANGSMITH_PROJECT"] = "decepticon"
+		values["LANGSMITH_PROJECT"] = "botron"
 	}
 
 	if err := config.WriteEnvFromEmbed(config.EnvPath(), values); err != nil {
@@ -208,7 +218,6 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 	fmt.Println(ui.Green.Render("  ✓ Configuration saved"))
 	fmt.Println()
 	fmt.Println(ui.Dim.Render("  ┌──────────────────────────────────┐"))
-	fmt.Println(ui.Dim.Render("  │") + ui.Cyan.Render("  Auth      ") + ui.Dim.Render(authMethod))
 	fmt.Println(ui.Dim.Render("  │") + ui.Cyan.Render("  Provider  ") + ui.Dim.Render(llmProvider))
 	fmt.Println(ui.Dim.Render("  │") + ui.Cyan.Render("  Profile   ") + ui.Dim.Render(profile))
 	if useLangSmith {
@@ -218,6 +227,6 @@ func runOnboard(cmd *cobra.Command, args []string) error {
 	fmt.Println(ui.Dim.Render("  │  ") + ui.Dim.Render(config.EnvPath()))
 	fmt.Println(ui.Dim.Render("  └──────────────────────────────────┘"))
 	fmt.Println()
-	ui.DimText("  Run 'decepticon' to start the platform")
+	ui.DimText("  Run 'botron' to start the platform")
 	return nil
 }

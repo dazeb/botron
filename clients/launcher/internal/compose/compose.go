@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
 )
 
 // Compose wraps Docker Compose commands for Decepticon services.
@@ -53,7 +53,7 @@ func (c *Compose) baseArgs() []string {
 	return []string{"compose", "-f", c.ComposeFile, "--env-file", c.EnvFile}
 }
 
-// readVersion returns the installed version from $DECEPTICON_HOME/.version,
+// readVersion returns the installed version from $BOTRON_HOME/.version,
 // or an empty string if the file is missing or unreadable. The launcher
 // (install + auto-update) is the single writer; compose falls back to :latest
 // when the marker is absent.
@@ -65,7 +65,7 @@ func (c *Compose) readVersion() string {
 	return strings.TrimSpace(string(data))
 }
 
-// composeEnv returns the parent environment with DECEPTICON_VERSION pinned
+// composeEnv returns the parent environment with BOTRON_VERSION pinned
 // from the .version file. docker compose treats the process environment as
 // higher precedence than --env-file, so this overrides any stale value the
 // user may have written into .env and avoids the silent `:latest` drift
@@ -73,7 +73,7 @@ func (c *Compose) readVersion() string {
 func (c *Compose) composeEnv() []string {
 	env := os.Environ()
 	if v := c.readVersion(); v != "" {
-		env = append(env, "DECEPTICON_VERSION="+v)
+		env = append(env, "BOTRON_VERSION="+v)
 	}
 	return env
 }
@@ -104,7 +104,7 @@ func (c *Compose) run(args []string, interactive bool) error {
 // re-implement HTTP polling.
 //
 // `--wait-timeout` is the single user-facing patience knob. Override via
-// DECEPTICON_STARTUP_TIMEOUT_SECONDS for slower hardware. Default 600s
+// BOTRON_STARTUP_TIMEOUT_SECONDS for slower hardware. Default 600s
 // covers most environments after measuring 136s LiteLLM cold start in CI.
 func (c *Compose) Up(profiles ...string) error {
 	args := []string{}
@@ -116,9 +116,9 @@ func (c *Compose) Up(profiles ...string) error {
 }
 
 // startupTimeoutSeconds returns the --wait-timeout value as a string.
-// User override via DECEPTICON_STARTUP_TIMEOUT_SECONDS; falls back to 600s.
+// User override via BOTRON_STARTUP_TIMEOUT_SECONDS; falls back to 600s.
 func startupTimeoutSeconds() string {
-	if v := os.Getenv("DECEPTICON_STARTUP_TIMEOUT_SECONDS"); v != "" {
+	if v := os.Getenv("BOTRON_STARTUP_TIMEOUT_SECONDS"); v != "" {
 		if n, err := strconv.Atoi(v); err == nil && n > 0 {
 			return strconv.Itoa(n)
 		}
@@ -134,7 +134,7 @@ func (c *Compose) Down() error {
 }
 
 // DownAndPurge tears down containers, networks, and named volumes. Used by
-// `decepticon remove` so a full uninstall doesn't leave gigabytes of
+// `botron remove` so a full uninstall doesn't leave gigabytes of
 // postgres/neo4j data behind.
 func (c *Compose) DownAndPurge() error {
 	args := AllProfiles()
@@ -148,7 +148,7 @@ func (c *Compose) DownAndPurge() error {
 func (c *Compose) Pull(version string) error {
 	cmd := exec.Command("docker", append(c.baseArgs(), "pull")...)
 	if version != "" {
-		cmd.Env = append(os.Environ(), "DECEPTICON_VERSION="+version)
+		cmd.Env = append(os.Environ(), "BOTRON_VERSION="+version)
 	} else {
 		cmd.Env = c.composeEnv()
 	}
@@ -215,7 +215,7 @@ func (c *Compose) RunInteractive(profiles []string, service string, env map[stri
 // scratch directory can be retired without forcing the user to bring the
 // stack up just for cleanup.
 func (c *Compose) CleanScratch() {
-	cmd := exec.Command("docker", "exec", "decepticon-sandbox", "rm", "-rf", "/workspace/.scratch")
+	cmd := exec.Command("docker", "exec", "botron-sandbox", "rm", "-rf", "/workspace/.scratch")
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	_ = cmd.Run()
@@ -224,7 +224,7 @@ func (c *Compose) CleanScratch() {
 // RemoveOrphanedCLI removes any leftover CLI containers.
 func (c *Compose) RemoveOrphanedCLI() {
 	// Best-effort cleanup of orphaned CLI containers
-	out, err := exec.Command("docker", "ps", "-aq", "--filter", "name=decepticon.*cli").Output()
+	out, err := exec.Command("docker", "ps", "-aq", "--filter", "name=botron.*cli").Output()
 	if err != nil || len(out) == 0 {
 		return
 	}

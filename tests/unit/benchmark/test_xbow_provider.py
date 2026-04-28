@@ -8,7 +8,7 @@ from pathlib import Path
 
 from benchmark.providers.xbow import XBOWProvider
 from benchmark.schemas import Challenge, FilterConfig
-from decepticon.core.engagement import EngagementState, IterationResult
+from botron.core.engagement import EngagementState, IterationResult
 
 
 def _create_mock_benchmarks(tmp_path: Path) -> Path:

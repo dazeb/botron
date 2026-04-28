@@ -101,8 +101,7 @@ These can be set in your `.env` file (configure with `decepticon onboard`) or as
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `DECEPTICON_MODEL_PROFILE` | `eco` | Model profile: `eco`, `max`, or `test` |
-| `DECEPTICON_MODEL_PROVIDER` | `api` | Auth method: `api` (API keys) or `auth` (OAuth) |
+| `BOTRON_MODEL_PROFILE` | `eco` | Model profile: `eco`, `max`, or `test` |
 
 See [Models](models.md) for full profile details.
 
@@ -143,4 +142,4 @@ Currently supported profiles: `c2-sliver`. Future: `c2-havoc`.
 
 | Variable | Description |
 |----------|-------------|
-| `DECEPTICON_DEBUG` | Set to `true` for verbose debug output |
+| `BOTRON_DEBUG` | Set to `true` for verbose debug output |

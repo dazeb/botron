@@ -46,7 +46,7 @@ jobs:
         with:
           filters: |
             python:
-              - 'decepticon/**'
+              - 'botron/**'
               - 'tests/**'
               - 'pyproject.toml'
               - 'uv.lock'
@@ -71,7 +71,7 @@ jobs:
           filters: |
             langgraph:
               - 'containers/langgraph.Dockerfile'
-              - 'decepticon/**'
+              - 'botron/**'
               - 'pyproject.toml'
               - 'uv.lock'
               - 'skills/**'
@@ -198,7 +198,7 @@ jobs:
       - name: Build
         run: cd clients/web && npm run build
         env:
-          NEXT_PUBLIC_DECEPTICON_EDITION: oss
+          NEXT_PUBLIC_BOTRON_EDITION: oss
 
   docker-build:
     name: Docker build (${{ matrix.image }})
@@ -218,13 +218,13 @@ jobs:
           file: containers/${{ matrix.image }}.Dockerfile
           push: false
           load: true
-          tags: decepticon-${{ matrix.image }}:ci
+          tags: botron-${{ matrix.image }}:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@0.35.0
         with:
-          image-ref: decepticon-${{ matrix.image }}:ci
+          image-ref: botron-${{ matrix.image }}:ci
           format: sarif
           output: trivy-${{ matrix.image }}.sarif
           severity: CRITICAL,HIGH

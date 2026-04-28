@@ -7,7 +7,7 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
-from decepticon.tools.interaction import ask_user_question
+from botron.tools.interaction import ask_user_question
 
 # Pydantic constraints expressed in the tool signature; mirrored here so the
 # tests document the contract without re-importing private constants.
@@ -60,11 +60,11 @@ def test_emits_custom_event_with_id_and_payload():
 
     with (
         patch(
-            "decepticon.tools.interaction.ask_user.get_stream_writer",
+            "botron.tools.interaction.ask_user.get_stream_writer",
             return_value=fake_writer,
         ),
         patch(
-            "decepticon.tools.interaction.ask_user.interrupt",
+            "botron.tools.interaction.ask_user.interrupt",
             return_value="Yes",
         ),
     ):
@@ -86,11 +86,11 @@ def test_emits_custom_event_with_id_and_payload():
 def test_returns_interrupt_value_verbatim_for_single_select():
     with (
         patch(
-            "decepticon.tools.interaction.ask_user.get_stream_writer",
+            "botron.tools.interaction.ask_user.get_stream_writer",
             return_value=lambda _evt: None,
         ),
         patch(
-            "decepticon.tools.interaction.ask_user.interrupt",
+            "botron.tools.interaction.ask_user.interrupt",
             return_value="No",
         ),
     ):
@@ -101,11 +101,11 @@ def test_returns_list_verbatim_for_multi_select():
     chosen = ["Yes", "No"]
     with (
         patch(
-            "decepticon.tools.interaction.ask_user.get_stream_writer",
+            "botron.tools.interaction.ask_user.get_stream_writer",
             return_value=lambda _evt: None,
         ),
         patch(
-            "decepticon.tools.interaction.ask_user.interrupt",
+            "botron.tools.interaction.ask_user.interrupt",
             return_value=chosen,
         ),
     ):
@@ -116,11 +116,11 @@ def test_returns_free_text_when_allow_other_selected():
     typed = "Custom answer from operator"
     with (
         patch(
-            "decepticon.tools.interaction.ask_user.get_stream_writer",
+            "botron.tools.interaction.ask_user.get_stream_writer",
             return_value=lambda _evt: None,
         ),
         patch(
-            "decepticon.tools.interaction.ask_user.interrupt",
+            "botron.tools.interaction.ask_user.interrupt",
             return_value=typed,
         ),
     ):
@@ -135,11 +135,11 @@ def test_skips_writer_when_outside_graph_context():
 
     with (
         patch(
-            "decepticon.tools.interaction.ask_user.get_stream_writer",
+            "botron.tools.interaction.ask_user.get_stream_writer",
             side_effect=raising,
         ),
         patch(
-            "decepticon.tools.interaction.ask_user.interrupt",
+            "botron.tools.interaction.ask_user.interrupt",
             return_value="Yes",
         ),
     ):
@@ -150,7 +150,7 @@ def test_skips_writer_when_outside_graph_context():
 def test_rejects_header_longer_than_max():
     too_long = "X" * (HEADER_MAX_CHARS + 1)
     with patch(
-        "decepticon.tools.interaction.ask_user.interrupt",
+        "botron.tools.interaction.ask_user.interrupt",
         return_value="Yes",
     ):
         with pytest.raises(ValidationError):
@@ -161,7 +161,7 @@ def test_accepts_empty_options():
     """The tool now allows zero options so the operator can answer free-form
     via the Other fallback; a single option is also valid."""
     with patch(
-        "decepticon.tools.interaction.ask_user.interrupt",
+        "botron.tools.interaction.ask_user.interrupt",
         return_value="typed answer",
     ):
         assert _invoke(options=[], allow_other=True) == "typed answer"
@@ -171,7 +171,7 @@ def test_accepts_empty_options():
 def test_rejects_too_many_options():
     too_many = [{"label": f"L{i}", "description": f"D{i}"} for i in range(MAX_OPTIONS + 1)]
     with patch(
-        "decepticon.tools.interaction.ask_user.interrupt",
+        "botron.tools.interaction.ask_user.interrupt",
         return_value="Yes",
     ):
         with pytest.raises(ValidationError):
@@ -183,11 +183,11 @@ def test_accepts_max_option_counts():
     boundary_max = [{"label": f"L{i}", "description": f"D{i}"} for i in range(MAX_OPTIONS)]
     with (
         patch(
-            "decepticon.tools.interaction.ask_user.get_stream_writer",
+            "botron.tools.interaction.ask_user.get_stream_writer",
             return_value=lambda _evt: None,
         ),
         patch(
-            "decepticon.tools.interaction.ask_user.interrupt",
+            "botron.tools.interaction.ask_user.interrupt",
             return_value="L0",
         ),
     ):
@@ -196,7 +196,7 @@ def test_accepts_max_option_counts():
 
 def test_rejects_option_without_label_or_description():
     with patch(
-        "decepticon.tools.interaction.ask_user.interrupt",
+        "botron.tools.interaction.ask_user.interrupt",
         return_value="Yes",
     ):
         bad = [
@@ -210,7 +210,7 @@ def test_rejects_option_without_label_or_description():
 def test_rejects_option_with_extra_fields():
     """extra='forbid' on QuestionOption keeps the schema strict for the LLM."""
     with patch(
-        "decepticon.tools.interaction.ask_user.interrupt",
+        "botron.tools.interaction.ask_user.interrupt",
         return_value="Yes",
     ):
         bad = [

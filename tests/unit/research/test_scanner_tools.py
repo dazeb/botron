@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from decepticon.tools.research import _state as state
-from decepticon.tools.research.graph import KnowledgeGraph, NodeKind
-from decepticon.tools.research.scanner_tools import (
+from botron.tools.research import _state as state
+from botron.tools.research.graph import KnowledgeGraph, NodeKind
+from botron.tools.research.scanner_tools import (
     kg_add_candidate,
     rank_candidates,
     scan_shard,

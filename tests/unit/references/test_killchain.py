@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from decepticon.tools.references.killchain import (
+from botron.tools.references.killchain import (
     load_entries,
     lookup,
     normalize_phase,

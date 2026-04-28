@@ -3,10 +3,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/compose"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/updater"
+	"github.com/dazeb/botron/clients/launcher/internal/compose"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/updater"
 	"github.com/spf13/cobra"
 )
 
@@ -46,7 +46,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 	if config.EnvExists() {
 		env, _ = config.LoadEnv(config.EnvPath())
 	}
-	branch := config.Get(env, "DECEPTICON_BRANCH", "main")
+	branch := config.Get(env, "BOTRON_BRANCH", "main")
 
 	// Sync config files
 	ui.Info("Syncing configuration files...")

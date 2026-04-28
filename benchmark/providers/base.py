@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from benchmark.schemas import Challenge, ChallengeResult, FilterConfig, SetupResult
-    from decepticon.core.engagement import EngagementState
+    from botron.core.engagement import EngagementState
 
 
 class BaseBenchmarkProvider(ABC):

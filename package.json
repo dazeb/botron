@@ -1,5 +1,5 @@
 {
-  "name": "decepticon",
+  "name": "botron",
   "private": true,
   "workspaces": [
     "clients/*",

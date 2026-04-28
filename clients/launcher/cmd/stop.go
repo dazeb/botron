@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/compose"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/compose"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
 	"github.com/spf13/cobra"
 )
 

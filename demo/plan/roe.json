@@ -6,14 +6,14 @@
   "engagement_type": "internal",
   "testing_window": "24/7 (isolated lab, UTC)",
   "in_scope": [
-    { "target": "decepticon-msf2", "type": "host", "notes": "All ports and services." }
+    { "target": "botron-msf2", "type": "host", "notes": "All ports and services." }
   ],
   "out_of_scope": [
-    { "target": "decepticon-*", "type": "host", "notes": "All infrastructure containers except decepticon-msf2." }
+    { "target": "decepticon-*", "type": "host", "notes": "All infrastructure containers except botron-msf2." }
   ],
   "prohibited_actions": [
     "DoS attacks",
-    "Attacking hosts outside decepticon-net",
+    "Attacking hosts outside botron-net",
     "Data exfiltration to external systems"
   ],
   "permitted_actions": [

@@ -4,8 +4,8 @@ import asyncio
 
 import pytest
 
-from decepticon.llm.factory import LLMFactory
-from decepticon.llm.models import GEMINI_FLASH, HAIKU, LLMModelMapping, ProxyConfig
+from botron.llm.factory import LLMFactory
+from botron.llm.models import GEMINI_FLASH, HAIKU, LLMModelMapping, ProxyConfig
 
 
 class TestLLMFactory:
@@ -32,9 +32,9 @@ class TestLLMFactory:
 
     def test_get_model_different_roles(self):
         recon = self.factory.get_model("recon")
-        decepticon = self.factory.get_model("decepticon")
-        assert recon is not decepticon
-        assert recon.model_name != decepticon.model_name
+        botron_agent = self.factory.get_model("botron")
+        assert recon is not botron_agent
+        assert recon.model_name != botron_agent.model_name
 
     def test_get_model_unknown_role_raises(self):
         with pytest.raises(KeyError, match="No model assignment"):

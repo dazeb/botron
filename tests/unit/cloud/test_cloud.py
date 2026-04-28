@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from decepticon.tools.cloud.aws import (
+from botron.tools.cloud.aws import (
     analyze_iam_policy,
     scan_bucket_names,
     scan_user_data,
 )
-from decepticon.tools.cloud.k8s import analyze_k8s_manifest
-from decepticon.tools.cloud.metadata import METADATA_ENDPOINTS
-from decepticon.tools.cloud.terraform import analyze_tfstate
+from botron.tools.cloud.k8s import analyze_k8s_manifest
+from botron.tools.cloud.metadata import METADATA_ENDPOINTS
+from botron.tools.cloud.terraform import analyze_tfstate
 
 
 class TestIAMPolicy:

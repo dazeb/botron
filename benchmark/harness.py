@@ -16,7 +16,7 @@ import httpx
 from benchmark.config import BenchmarkConfig
 from benchmark.providers.base import BaseBenchmarkProvider
 from benchmark.schemas import Challenge, ChallengeResult
-from decepticon.core.engagement import EngagementState, IterationResult
+from botron.core.engagement import EngagementState, IterationResult
 
 log = logging.getLogger(__name__)
 
@@ -31,9 +31,9 @@ class AgentResponse:
 
 
 class Harness:
-    """Runs benchmark challenges through the decepticon main agent.
+    """Runs benchmark challenges through the botron orchestrator.
 
-    The decepticon agent handles the full kill chain:
+    The botron orchestrator handles the full kill chain:
       1. Reviews the pre-seeded OPPLAN
       2. Delegates to recon sub-agent via task() tool
       3. Delegates to exploit sub-agent via task() tool
@@ -53,7 +53,7 @@ class Harness:
             try:
                 r = httpx.get(
                     f"{litellm_url}/v1/models",
-                    headers={"Authorization": "Bearer sk-decepticon-master"},
+                    headers={"Authorization": "Bearer sk-botron-master"},
                     timeout=5,
                 )
                 if r.status_code == 200:
@@ -84,9 +84,9 @@ class Harness:
             capture_output=True,
         )
         # Reconnect networks (lost after container recreation)
-        for net in ("benchmark_decepticon-net", "benchmark_sandbox-net"):
+        for net in ("benchmark_botron-net", "benchmark_sandbox-net"):
             subprocess.run(
-                ["docker", "network", "connect", net, "decepticon-langgraph"],
+                ["docker", "network", "connect", net, "botron-langgraph"],
                 capture_output=True,
             )
         # Wait for LangGraph to become healthy
@@ -102,8 +102,8 @@ class Harness:
         log.error("LangGraph failed to restart after 60s")
 
     async def run_challenge(self, challenge: Challenge) -> ChallengeResult:
-        # Use ~/.decepticon/workspace/ which is bind-mounted as /workspace/ in the sandbox
-        workspace = (Path.home() / f".decepticon/workspace/benchmark-{challenge.id}").resolve()
+        # Use ~/.botron/workspace/ which is bind-mounted as /workspace/ in the sandbox
+        workspace = (Path.home() / f".botron/workspace/benchmark-{challenge.id}").resolve()
 
         # Ensure LangGraph is alive before each challenge
         self._ensure_services_healthy()
@@ -111,7 +111,7 @@ class Harness:
         # Clean residual sandbox workspace from previous runs (sandbox is persistent)
         sandbox_ws = f"/workspace/benchmark-{challenge.id}"
         subprocess.run(
-            ["docker", "exec", "decepticon-sandbox", "rm", "-rf", sandbox_ws],
+            ["docker", "exec", "botron-sandbox", "rm", "-rf", sandbox_ws],
             capture_output=True,
         )
         if workspace.exists():
@@ -132,7 +132,7 @@ class Harness:
                     duration_seconds=round(time.time() - start, 2),
                 )
 
-            # Invoke decepticon main agent — handles full chain via SubAgentMiddleware
+            # Invoke botron orchestrator — handles full chain via SubAgentMiddleware
             # Agent creates its own OPPLAN based on challenge info
             extra_ports = setup_result.extra_ports
             agent_resp = await asyncio.wait_for(
@@ -145,7 +145,7 @@ class Harness:
             state.iteration_history.append(
                 IterationResult(
                     objective_id="OBJ-001",
-                    agent_used="decepticon",
+                    agent_used="botron",
                     outcome="PASSED" if "FLAG{" in agent_resp.text else "BLOCKED",
                     raw_output=agent_resp.text,
                     duration_seconds=round(time.time() - start, 2),
@@ -158,7 +158,7 @@ class Harness:
                 state.iteration_history.append(
                     IterationResult(
                         objective_id="OBJ-002",
-                        agent_used="decepticon",
+                        agent_used="botron",
                         outcome="PASSED" if "FLAG{" in workspace_text else "BLOCKED",
                         raw_output=workspace_text,
                         duration_seconds=0.0,
@@ -180,7 +180,7 @@ class Harness:
                 state.iteration_history.append(
                     IterationResult(
                         objective_id="OBJ-002",
-                        agent_used="decepticon",
+                        agent_used="botron",
                         outcome="PASSED",
                         raw_output=workspace_text,
                         duration_seconds=round(time.time() - start, 2),
@@ -220,7 +220,7 @@ class Harness:
         target_url: str,
         extra_ports: dict[int, int] | None = None,
     ) -> AgentResponse:
-        """Invoke the decepticon main agent to execute the full benchmark chain.
+        """Invoke the botron orchestrator to execute the full benchmark chain.
 
         The agent receives benchmark context and runs its normal workflow:
           1. Creates OPPLAN objectives from the challenge info
@@ -228,7 +228,7 @@ class Harness:
           3. Delegates to exploit sub-agent via task()
           4. Captures the flag
         """
-        # The sandbox maps ~/.decepticon/workspace/ → /workspace/
+        # The sandbox maps ~/.botron/workspace/ → /workspace/
         sandbox_workspace = f"/workspace/benchmark-{challenge.id}"
         tags_str = ", ".join(challenge.tags)
 
@@ -270,7 +270,7 @@ class Harness:
         thread_id = str(uuid.uuid4())
         url = f"{self.config.langgraph_url}/runs/wait"
         payload = {
-            "assistant_id": "decepticon",
+            "assistant_id": "botron",
             "thread_id": thread_id,
             "input": input_state,
             "config": {

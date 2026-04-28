@@ -6,12 +6,12 @@ import os
 import struct
 from pathlib import Path
 
-from decepticon.tools.reversing.binary import identify_binary
-from decepticon.tools.reversing.packer import detect_packer, shannon_entropy
-from decepticon.tools.reversing.rop import filter_gadgets_by_pattern, find_rop_gadgets
-from decepticon.tools.reversing.scripts import ghidra_recon_script, r2_recon_script
-from decepticon.tools.reversing.strings import ExtractedString, extract_strings, group_by_category
-from decepticon.tools.reversing.symbols import summarize_symbols
+from botron.tools.reversing.binary import identify_binary
+from botron.tools.reversing.packer import detect_packer, shannon_entropy
+from botron.tools.reversing.rop import filter_gadgets_by_pattern, find_rop_gadgets
+from botron.tools.reversing.scripts import ghidra_recon_script, r2_recon_script
+from botron.tools.reversing.strings import ExtractedString, extract_strings, group_by_category
+from botron.tools.reversing.symbols import summarize_symbols
 
 # ── Binary identification ───────────────────────────────────────────────
 

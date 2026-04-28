@@ -13,7 +13,7 @@ def _mock_config():
     mock_cfg = MagicMock()
     mock_cfg.docker.sandbox_container_name = "test-sandbox"
 
-    with patch("decepticon.agents.defender.load_config", return_value=mock_cfg):
+    with patch("botron.agents.defender.load_config", return_value=mock_cfg):
         yield mock_cfg
 
 
@@ -24,7 +24,7 @@ def _mock_llm_factory():
     mock_factory.get_model.return_value = MagicMock()
     mock_factory.get_fallback_models.return_value = []
 
-    with patch("decepticon.agents.defender.LLMFactory", return_value=mock_factory):
+    with patch("botron.agents.defender.LLMFactory", return_value=mock_factory):
         yield mock_factory
 
 
@@ -32,7 +32,7 @@ def _mock_llm_factory():
 def _mock_summarization():
     """Patch create_summarization_middleware so it doesn't validate the LLM type."""
     with patch(
-        "decepticon.agents.defender.create_summarization_middleware",
+        "botron.agents.defender.create_summarization_middleware",
         return_value=MagicMock(),
     ):
         yield
@@ -44,13 +44,13 @@ def _mock_create_agent():
     mock_agent = MagicMock()
     mock_agent.with_config.return_value = mock_agent
 
-    with patch("decepticon.agents.defender.create_agent", return_value=mock_agent) as m:
+    with patch("botron.agents.defender.create_agent", return_value=mock_agent) as m:
         yield m
 
 
 def test_create_defender_agent_returns_agent(_mock_config, _mock_llm_factory, _mock_create_agent):
     """create_defender_agent() returns a runnable agent graph."""
-    from decepticon.agents.defender import create_defender_agent
+    from botron.agents.defender import create_defender_agent
 
     agent = create_defender_agent()
     assert agent is not None
@@ -61,7 +61,7 @@ def test_create_defender_agent_has_defense_tools(
     _mock_config, _mock_llm_factory, _mock_create_agent
 ):
     """Defender agent includes all required defense tools."""
-    from decepticon.agents.defender import create_defender_agent
+    from botron.agents.defender import create_defender_agent
 
     create_defender_agent()
 
@@ -88,7 +88,7 @@ def test_create_defender_agent_middleware_stack(
     _mock_config, _mock_llm_factory, _mock_create_agent
 ):
     """Defender agent has the correct middleware stack."""
-    from decepticon.agents.defender import create_defender_agent
+    from botron.agents.defender import create_defender_agent
 
     create_defender_agent()
 
@@ -101,7 +101,7 @@ def test_create_defender_agent_middleware_stack(
 
 def test_create_defender_agent_name(_mock_config, _mock_llm_factory, _mock_create_agent):
     """Defender agent is named 'defender'."""
-    from decepticon.agents.defender import create_defender_agent
+    from botron.agents.defender import create_defender_agent
 
     create_defender_agent()
 

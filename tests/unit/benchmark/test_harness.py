@@ -56,7 +56,7 @@ class TestHarness:
         )
         challenge = _make_challenge(tmp_path)
 
-        workspace_path = (Path.home() / f".decepticon/workspace/benchmark-{challenge.id}").resolve()
+        workspace_path = (Path.home() / f".botron/workspace/benchmark-{challenge.id}").resolve()
 
         await harness.run_challenge(challenge)
 
@@ -85,7 +85,7 @@ class TestHarness:
         )
         challenge = _make_challenge(tmp_path)
 
-        workspace_path = (Path.home() / f".decepticon/workspace/benchmark-{challenge.id}").resolve()
+        workspace_path = (Path.home() / f".botron/workspace/benchmark-{challenge.id}").resolve()
 
         await harness.run_challenge(challenge)
 

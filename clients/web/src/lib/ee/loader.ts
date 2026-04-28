@@ -32,12 +32,12 @@ export function getEE(): EEFeatures {
 
 /**
  * Returns true when EE is available.
- * Client-safe: uses NEXT_PUBLIC_DECEPTICON_EDITION env var on the browser,
+ * Client-safe: uses NEXT_PUBLIC_BOTRON_EDITION env var on the browser,
  * actual package detection on the server.
  */
 export function hasEE(): boolean {
   if (typeof window !== "undefined") {
-    return process.env.NEXT_PUBLIC_DECEPTICON_EDITION === "ee";
+    return process.env.NEXT_PUBLIC_BOTRON_EDITION === "ee";
   }
   return Object.keys(getEE()).length > 0;
 }

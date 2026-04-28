@@ -7,11 +7,11 @@ from pathlib import Path
 
 import pytest
 
-from decepticon.tools.research import _state as state
-from decepticon.tools.research import tools as research_tools
-from decepticon.tools.research.cve import Exploitability
-from decepticon.tools.research.graph import KnowledgeGraph, NodeKind
-from decepticon.tools.web.jwt import forge_token
+from botron.tools.research import _state as state
+from botron.tools.research import tools as research_tools
+from botron.tools.research.cve import Exploitability
+from botron.tools.research.graph import KnowledgeGraph, NodeKind
+from botron.tools.web.jwt import forge_token
 
 
 class _FakeStore:

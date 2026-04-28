@@ -36,7 +36,7 @@ func TestFetchLatestRelease_Mock(t *testing.T) {
 	release := Release{
 		TagName: "v1.2.0",
 		Assets: []Asset{
-			{Name: "decepticon-linux-amd64", BrowserDownloadURL: "https://example.com/binary"},
+			{Name: "botron-linux-amd64", BrowserDownloadURL: "https://example.com/binary"},
 		},
 	}
 
@@ -61,7 +61,7 @@ func TestFetchLatestRelease_Mock(t *testing.T) {
 	if got.TagName != "v1.2.0" {
 		t.Errorf("TagName = %q, want v1.2.0", got.TagName)
 	}
-	if len(got.Assets) != 1 || got.Assets[0].Name != "decepticon-linux-amd64" {
+	if len(got.Assets) != 1 || got.Assets[0].Name != "botron-linux-amd64" {
 		t.Errorf("Assets = %v", got.Assets)
 	}
 }

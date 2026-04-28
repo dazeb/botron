@@ -2,7 +2,7 @@
 
 import pytest
 
-from decepticon.llm.models import (
+from botron.llm.models import (
     GEMINI_FLASH,
     GPT_5,
     HAIKU,
@@ -11,7 +11,7 @@ from decepticon.llm.models import (
     LLMModelMapping,
     ModelAssignment,
 )
-from decepticon.llm.router import ModelRouter
+from botron.llm.router import ModelRouter
 
 
 class TestModelRouter:
@@ -24,7 +24,7 @@ class TestModelRouter:
         assert model == HAIKU
 
     def test_resolve_decepticon(self):
-        model = self.router.resolve("decepticon")
+        model = self.router.resolve("botron")
         assert model == OPUS
 
     def test_resolve_with_fallback_returns_chain(self):
@@ -34,7 +34,7 @@ class TestModelRouter:
         assert chain[1] == GEMINI_FLASH
 
     def test_resolve_with_fallback_strategic(self):
-        chain = self.router.resolve_with_fallback("decepticon")
+        chain = self.router.resolve_with_fallback("botron")
         assert len(chain) == 2
         assert chain[0] == OPUS
         assert chain[1] == GPT_5

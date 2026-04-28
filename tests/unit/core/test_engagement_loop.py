@@ -8,9 +8,9 @@ from unittest.mock import patch
 
 import pytest
 
-from decepticon.core.engagement import EngagementConfig, EngagementState
-from decepticon.core.engagement_loop import EngagementLoop
-from decepticon.core.schemas import (
+from botron.core.engagement import EngagementConfig, EngagementState
+from botron.core.engagement_loop import EngagementLoop
+from botron.core.schemas import (
     OPPLAN,
     Objective,
     ObjectivePhase,

@@ -8,14 +8,14 @@ import logging
 
 import pytest
 
-from decepticon.core import logging as dlog
+from botron.core import logging as dlog
 
 
 @pytest.fixture(autouse=True)
 def reset_logger():
     """Reset the decepticon root logger between tests."""
     yield
-    root = logging.getLogger("decepticon")
+    root = logging.getLogger("botron")
     for h in list(root.handlers):
         root.removeHandler(h)
     dlog._CONFIGURED = False  # type: ignore[attr-defined]
@@ -24,7 +24,7 @@ def reset_logger():
 def _capture(level: str | int = "INFO", fmt: str = "text") -> io.StringIO:
     buf = io.StringIO()
     dlog.configure_logging(level=level, fmt=fmt)
-    handler = logging.getLogger("decepticon").handlers[0]
+    handler = logging.getLogger("botron").handlers[0]
     handler.stream = buf
     return buf
 
@@ -32,13 +32,13 @@ def _capture(level: str | int = "INFO", fmt: str = "text") -> io.StringIO:
 class TestGetLogger:
     def test_namespaces_under_decepticon(self) -> None:
         log = dlog.get_logger("auth.manager")
-        assert log.name == "decepticon.auth.manager"
+        assert log.name == "botron.auth.manager"
 
     def test_auto_configures_on_first_use(self) -> None:
         dlog._CONFIGURED = False  # type: ignore[attr-defined]
         log = dlog.get_logger("module")
         assert dlog._CONFIGURED is True  # type: ignore[attr-defined]
-        assert logging.getLogger("decepticon").handlers, "handler should be installed"
+        assert logging.getLogger("botron").handlers, "handler should be installed"
         del log
 
 
@@ -50,7 +50,7 @@ class TestTextFormat:
         out = buf.getvalue()
         assert "hello world" in out
         assert "INFO" in out
-        assert "decepticon.test" in out
+        assert "botron.test" in out
 
 
 class TestJsonFormat:
@@ -62,7 +62,7 @@ class TestJsonFormat:
         record = json.loads(line)
         assert record["msg"] == "structured log"
         assert record["level"] == "INFO"
-        assert record["logger"] == "decepticon.test"
+        assert record["logger"] == "botron.test"
         assert "ts" in record
 
     def test_json_includes_extra_fields(self) -> None:
@@ -104,22 +104,22 @@ class TestJsonFormat:
 class TestConfigureLogging:
     def test_idempotent_replaces_handler(self) -> None:
         dlog.configure_logging(fmt="text")
-        root = logging.getLogger("decepticon")
+        root = logging.getLogger("botron")
         assert len(root.handlers) == 1
         dlog.configure_logging(fmt="json")
         assert len(root.handlers) == 1  # replaced, not appended
 
     def test_respects_level(self) -> None:
         dlog.configure_logging(level="WARNING", fmt="text")
-        root = logging.getLogger("decepticon")
+        root = logging.getLogger("botron")
         assert root.level == logging.WARNING
 
     def test_env_var_override(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        monkeypatch.setenv("DECEPTICON_LOG_FORMAT", "json")
-        monkeypatch.setenv("DECEPTICON_LOG_LEVEL", "DEBUG")
+        monkeypatch.setenv("BOTRON_LOG_FORMAT", "json")
+        monkeypatch.setenv("BOTRON_LOG_LEVEL", "DEBUG")
         dlog.configure_logging()
-        root = logging.getLogger("decepticon")
+        root = logging.getLogger("botron")
         assert root.level == logging.DEBUG
-        from decepticon.core.logging import _JsonFormatter
+        from botron.core.logging import _JsonFormatter
 
         assert isinstance(root.handlers[0].formatter, _JsonFormatter)

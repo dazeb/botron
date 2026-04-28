@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
 	"github.com/spf13/cobra"
 )
 
 var version = "dev"
 
 var rootCmd = &cobra.Command{
-	Use:   "decepticon",
+	Use:   "botron",
 	Short: "Decepticon — Autonomous Hacking Agent for Red Team",
 	Long:  ui.RenderBanner() + "\n" + ui.Dim.Render("Autonomous Hacking Agent for Red Team"),
 	CompletionOptions: cobra.CompletionOptions{

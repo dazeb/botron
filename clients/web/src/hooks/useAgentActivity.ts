@@ -95,7 +95,7 @@ export function useAgentActivity({
 
     let angleIdx = 0;
     for (const agent of visibleAgents) {
-      const isOrch = agent.id === "decepticon";
+      const isOrch = agent.id === "botron";
       const runtimeState = agentStates.get(agent.id) ?? (isOrch ? "processing" : "idle");
       const radius = isOrch ? ORCHESTRATOR_RADIUS : AGENT_RADIUS;
       const circleR = 160;
@@ -168,9 +168,9 @@ export function useAgentActivity({
     const edges: GraphEdge[] = [];
 
     for (const [agentId, state] of agentStates) {
-      if (agentId === "decepticon") continue;
+      if (agentId === "botron") continue;
       edges.push({
-        source: "decepticon",
+        source: "botron",
         target: agentId,
         active: state === "processing" || isWaitingState(state),
       });

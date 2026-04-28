@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"charm.land/huh/v2"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/compose"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/compose"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -62,7 +62,7 @@ func runRemove(cmd *cobra.Command, args []string) error {
 
 	// Phase 2: Remove Docker images
 	ui.Info("Removing Docker images...")
-	out, err := exec.Command("docker", "images", "--format", "{{.Repository}}:{{.Tag}}", "--filter", "reference=*decepticon*").Output()
+	out, err := exec.Command("docker", "images", "--format", "{{.Repository}}:{{.Tag}}", "--filter", "reference=*botron*").Output()
 	if err == nil {
 		for _, img := range strings.Fields(strings.TrimSpace(string(out))) {
 			_ = exec.Command("docker", "rmi", "-f", img).Run()
@@ -86,7 +86,7 @@ func runRemove(cmd *cobra.Command, args []string) error {
 	}
 
 	userHome, _ := os.UserHomeDir()
-	backupDir := filepath.Join(userHome, "decepticon-workspace-backup")
+	backupDir := filepath.Join(userHome, "botron-workspace-backup")
 
 	skipHomeRemoval := false
 	if preserveWorkspace {
@@ -95,7 +95,7 @@ func runRemove(cmd *cobra.Command, args []string) error {
 		if err := backupWorkspace(wsDir, backupDir); err != nil {
 			ui.Warning("Backup failed: " + err.Error())
 			ui.Warning("Workspace data left in place at " + wsDir)
-			ui.DimText("Re-run 'decepticon remove' or move the workspace manually before deleting " + home)
+			ui.DimText("Re-run 'botron remove' or move the workspace manually before deleting " + home)
 			skipHomeRemoval = true
 		}
 	}
@@ -144,7 +144,7 @@ func cleanShellRC() {
 
 // cleanPathFromFile removes the exact two-line block install.sh appends:
 //
-//	# decepticon
+//	# botron
 //	export PATH="$HOME/.local/bin:$PATH"      # bash/zsh
 //	fish_add_path $HOME/.local/bin            # fish
 //
@@ -170,7 +170,7 @@ func cleanPathFromFile(path string) {
 	i := 0
 	for i < len(lines) {
 		line := lines[i]
-		if strings.TrimSpace(line) == "# decepticon" && i+1 < len(lines) && isInstallPathLine(lines[i+1]) {
+		if strings.TrimSpace(line) == "# botron" && i+1 < len(lines) && isInstallPathLine(lines[i+1]) {
 			// Also drop a single preceding blank line install.sh inserts.
 			if n := len(out); n > 0 && strings.TrimSpace(out[n-1]) == "" {
 				out = out[:n-1]

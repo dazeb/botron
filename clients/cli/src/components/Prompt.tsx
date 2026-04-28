@@ -13,7 +13,7 @@ interface PromptProps {
   onSubmit: (input: string) => void;
   /** Currently active agent name, e.g. "recon". null when idle. */
   activeAgent?: string | null;
-  /** Persistent assistant id ("soundwave" | "decepticon") — shown when no subagent is streaming. */
+  /** Persistent assistant id ("soundwave" | "botron") — shown when no subagent is streaming. */
   assistantId?: string;
   /** Queued message waiting to be sent after stream completes. */
   queuedMessage?: string | null;
@@ -88,7 +88,7 @@ export const Prompt = React.memo(function Prompt({
   runState,
   onSubmit,
   activeAgent = null,
-  assistantId = "decepticon",
+  assistantId = "botron",
   queuedMessage = null,
   onEditQueue,
 }: PromptProps) {

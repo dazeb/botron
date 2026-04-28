@@ -8,11 +8,11 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/compose"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/config"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/health"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/ui"
-	"github.com/PurpleAILAB/Decepticon/clients/launcher/internal/updater"
+	"github.com/dazeb/botron/clients/launcher/internal/compose"
+	"github.com/dazeb/botron/clients/launcher/internal/config"
+	"github.com/dazeb/botron/clients/launcher/internal/health"
+	"github.com/dazeb/botron/clients/launcher/internal/ui"
+	"github.com/dazeb/botron/clients/launcher/internal/updater"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +45,7 @@ func runDemo(cmd *cobra.Command, args []string) error {
 	// Download demo plan files — use release tag to stay in sync with installed version
 	branch := "v" + version
 	if version == "dev" || version == "" {
-		branch = config.Get(env, "DECEPTICON_BRANCH", "main")
+		branch = config.Get(env, "BOTRON_BRANCH", "main")
 	}
 	planDir := filepath.Join(demoDir, "plan")
 	if err := os.MkdirAll(planDir, 0o755); err != nil {
@@ -99,8 +99,8 @@ func runDemo(cmd *cobra.Command, args []string) error {
 	// Launch CLI with auto-message
 	ui.Info("Launching demo engagement...")
 	cliEnv := map[string]string{
-		"DECEPTICON_VERSION":         version,
-		"DECEPTICON_INITIAL_MESSAGE": "Resume the demo engagement and execute all objectives.",
+		"BOTRON_VERSION":         version,
+		"BOTRON_INITIAL_MESSAGE": "Resume the demo engagement and execute all objectives.",
 	}
 
 	if err := c.RunInteractive(

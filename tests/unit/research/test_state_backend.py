@@ -6,8 +6,8 @@ from collections.abc import Generator
 
 import pytest
 
-from decepticon.tools.research import _state as state
-from decepticon.tools.research.graph import KnowledgeGraph, Node, NodeKind
+from botron.tools.research import _state as state
+from botron.tools.research.graph import KnowledgeGraph, Node, NodeKind
 
 
 class _FakeStore:

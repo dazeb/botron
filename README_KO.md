@@ -154,7 +154,7 @@ LiteLLM 프록시를 통한 3가지 프로필. 각 역할에는 기본 모델과
 | **max** | Opus 4.6 | Opus 4.6 | Sonnet 4.6 | 고가치 타깃 |
 | **test** | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | 개발 / CI |
 
-`.env`에서 `DECEPTICON_MODEL_PROFILE=eco`로 설정. 프로바이더 장애나 속도 제한 시 자동 폴백.
+`.env`에서 `BOTRON_MODEL_PROFILE=eco`로 설정. 프로바이더 장애나 속도 제한 시 자동 폴백.
 
 → **[모델 전체 레퍼런스](docs/models.md)**
 

@@ -64,7 +64,7 @@ Use the [Feature Request](https://github.com/PurpleAILAB/Decepticon/issues/new?t
 - **Python**: Pydantic v2, Ruff for formatting/linting, basedpyright for type checking
 - **Line length**: 100 characters
 - **Imports**: Absolute imports, public API re-exported through `__init__.py`
-- **Logging**: `from decepticon.core.logging import get_logger; log = get_logger("module.sub")`
+- **Logging**: `from botron.core.logging import get_logger; log = get_logger("module.sub")`
 - **Skills**: Markdown files in `skills/` with YAML frontmatter
 - **CLI (TypeScript)**: Ink.js components in `clients/cli/src/`
 

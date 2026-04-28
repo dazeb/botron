@@ -12,7 +12,7 @@ import httpx
 
 from benchmark.providers.base import BaseBenchmarkProvider
 from benchmark.schemas import Challenge, ChallengeResult, FilterConfig, SetupResult
-from decepticon.core.engagement import EngagementState
+from botron.core.engagement import EngagementState
 
 log = logging.getLogger(__name__)
 

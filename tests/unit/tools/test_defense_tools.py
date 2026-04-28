@@ -8,13 +8,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from decepticon.schemas.defense_brief import (
+from botron.schemas.defense_brief import (
     DefenseActionResult,
     DefenseActionType,
     DefenseBrief,
 )
-from decepticon.tools.defense import tools as defense_tools
-from decepticon.tools.defense.tools import (
+from botron.tools.defense import tools as defense_tools
+from botron.tools.defense.tools import (
     defense_execute_action,
     defense_generate_brief,
     defense_read_brief,
@@ -122,7 +122,7 @@ def test_defense_log_action() -> None:
     mock_store._database = "neo4j"
 
     with patch.object(defense_tools, "_get_neo4j", return_value=mock_store):
-        from decepticon.tools.defense.tools import defense_log_action
+        from botron.tools.defense.tools import defense_log_action
 
         result_str = defense_log_action.invoke(
             {

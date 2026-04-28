@@ -22,11 +22,11 @@ const REQUIRED_PLAN_DOCS = ["roe", "conops", "deconfliction"] as const;
  * run. plan-docs is the source of truth — engagement.status drifts when
  * the operator switches between web and CLI.
  */
-function pickAssistant(planDocs: Record<string, unknown>): "soundwave" | "decepticon" {
+function pickAssistant(planDocs: Record<string, unknown>): "soundwave" | "botron" {
   for (const name of REQUIRED_PLAN_DOCS) {
     if (planDocs[name] == null) return "soundwave";
   }
-  return "decepticon";
+  return "botron";
 }
 
 export default function LivePage() {
@@ -37,7 +37,7 @@ export default function LivePage() {
   const [selectedAgent, setSelectedAgent] = useState<AgentConfig | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [engagement, setEngagement] = useState<EngagementMeta | null>(null);
-  const [agentId, setAgentId] = useState<"soundwave" | "decepticon" | null>(null);
+  const [agentId, setAgentId] = useState<"soundwave" | "botron" | null>(null);
 
   // Resolve the slug + assistant before mounting the terminal. Mounting it
   // earlier would spawn the PTY with wrong env (defaulting to soundwave with

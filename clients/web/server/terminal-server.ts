@@ -53,7 +53,7 @@ async function createThread(engagementId: string, agentId: string): Promise<stri
 wss.on("connection", async (ws: WebSocket, req) => {
   const url = new URL(req.url ?? "/", `http://localhost:${PORT}`);
   const engagementId = url.searchParams.get("engagementId") ?? "";
-  // engagementSlug is the folder name under ~/.decepticon/workspace/.
+  // engagementSlug is the folder name under ~/.botron/workspace/.
   // It identifies the engagement directory the CLI will operate inside;
   // engagementId is the DB record cuid passed to LangGraph thread metadata.
   const engagementSlug = url.searchParams.get("engagementSlug") ?? "";
@@ -82,16 +82,16 @@ wss.on("connection", async (ws: WebSocket, req) => {
     TERM: "xterm-256color",
     FORCE_COLOR: "1",
     // Names align with the CLI's expectations (clients/cli/src/hooks/useAgent.ts):
-    // DECEPTICON_ASSISTANT_ID picks the LangGraph assistant; DECEPTICON_ENGAGEMENT
+    // BOTRON_ASSISTANT_ID picks the LangGraph assistant; BOTRON_ENGAGEMENT
     // is the folder slug used for system-level logging and the engagement_ready
     // handoff. Internal Docker hostname for the LangGraph endpoint is forwarded
     // explicitly so the CLI subprocess does not fall back to localhost.
-    DECEPTICON_ASSISTANT_ID: agentId,
-    DECEPTICON_ENGAGEMENT: engagementSlug,
-    DECEPTICON_API_URL: LANGGRAPH_API_URL,
+    BOTRON_ASSISTANT_ID: agentId,
+    BOTRON_ENGAGEMENT: engagementSlug,
+    BOTRON_API_URL: LANGGRAPH_API_URL,
   };
   if (threadId) {
-    env.DECEPTICON_THREAD_ID = threadId;
+    env.BOTRON_THREAD_ID = threadId;
   }
 
   const term = pty.spawn("node", ["--import", "tsx/esm", CLI_PATH], {

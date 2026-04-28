@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from decepticon.observability.activity import ActivityLog
-from decepticon.observability.metrics import Counter, Gauge, Histogram, Registry, render
-from decepticon.observability.tracing import span
+from botron.observability.activity import ActivityLog
+from botron.observability.metrics import Counter, Gauge, Histogram, Registry, render
+from botron.observability.tracing import span
 
 
 class TestMetrics:

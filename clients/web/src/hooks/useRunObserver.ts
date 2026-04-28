@@ -142,7 +142,7 @@ export function useRunObserver({ threadId }: UseRunObserverOptions): UseRunObser
                   seenToolCalls.add(`decepticon-${tc.name}-${data.messages.length}`);
                   newEvents.push({
                     type: "subagent_tool_call",
-                    agent: "decepticon",
+                    agent: "botron",
                     tool: tc.name,
                     args: tc.args,
                   });
@@ -155,7 +155,7 @@ export function useRunObserver({ threadId }: UseRunObserverOptions): UseRunObser
                   seenToolCalls.add(key);
                   newEvents.push({
                     type: "subagent_tool_result",
-                    agent: "decepticon",
+                    agent: "botron",
                     tool: lastMsg.name,
                   });
                 }

@@ -1,6 +1,6 @@
 # Models
 
-Decepticon routes LLM requests through a [LiteLLM](https://github.com/BerriAI/litellm) proxy, which supports Anthropic, OpenAI, and Google backends with automatic failover.
+Decepticon routes LLM requests through a [LiteLLM](https://github.com/BerriAI/litellm) proxy, which supports Anthropic, OpenAI, Google, DeepSeek, xAI, Groq, Together AI, Fireworks, MiniMax, and Ollama backends with automatic failover.
 
 ---
 
@@ -15,28 +15,26 @@ Balanced cost and performance. Recommended for most engagements.
 | Role | Primary | Fallback |
 |------|---------|---------|
 | Orchestrator | `claude-opus-4-6` | `gpt-5.4` |
-| Planner | `claude-opus-4-6` | `gpt-5.4` |
-| Soundwave | `claude-haiku-4-5` | `gemini-2.5-flash` |
+| Planner | `claude-haiku-4-5` | `gemini-2.5-flash` |
 | Exploit | `claude-sonnet-4-6` | `gpt-4.1` |
 | Recon | `claude-haiku-4-5` | `gemini-2.5-flash` |
 | Post-Exploit | `claude-sonnet-4-6` | `gpt-4.1` |
 
 ### `max` — High-value targets
 
-Opus or Sonnet everywhere. Use for complex engagements where accuracy matters more than cost.
+Best models everywhere. Use for complex engagements where accuracy matters more than cost.
 
 | Role | Primary | Fallback |
 |------|---------|---------|
 | Orchestrator | `claude-opus-4-6` | `gpt-5.4` |
-| Planner | `claude-opus-4-6` | `claude-sonnet-4-6` |
-| Soundwave | `claude-sonnet-4-6` | `claude-haiku-4-5` |
+| Planner | `claude-sonnet-4-6` | `claude-haiku-4-5` |
 | Exploit | `claude-opus-4-6` | `claude-sonnet-4-6` |
 | Recon | `claude-sonnet-4-6` | `claude-opus-4-6` |
 | Post-Exploit | `claude-opus-4-6` | `claude-sonnet-4-6` |
 
 ### `test` — Development / CI
 
-Haiku everywhere. No fallback. Minimizes cost during development and automated testing.
+Fast models everywhere. Minimizes cost during development and automated testing.
 
 | Role | Primary | Fallback |
 |------|---------|---------|
@@ -49,7 +47,7 @@ Haiku everywhere. No fallback. Minimizes cost during development and automated t
 In your `.env` file (edit with `decepticon config`):
 
 ```bash
-DECEPTICON_MODEL_PROFILE=eco    # eco | max | test
+BOTRON_MODEL_PROFILE=eco    # eco | max | test
 ```
 
 The default is `eco` if not set.
@@ -70,12 +68,24 @@ Models are referenced using LiteLLM's `provider/model` format in `decepticon/llm
 
 | Provider | Model ID | Notes |
 |----------|----------|-------|
-| Anthropic | `anthropic/claude-opus-4-6` | Most capable |
-| Anthropic | `anthropic/claude-sonnet-4-6` | Balanced |
+| Anthropic | `anthropic/claude-opus-4-6` | Most capable reasoning |
+| Anthropic | `anthropic/claude-sonnet-4-6` | Balanced performance |
 | Anthropic | `anthropic/claude-haiku-4-5` | Fast, low cost |
 | OpenAI | `openai/gpt-5.4` | GPT fallback for Opus |
 | OpenAI | `openai/gpt-4.1` | GPT fallback for Sonnet |
-| Google | `gemini/gemini-2.5-flash` | Gemini fallback for Haiku |
+| Google | `gemini/gemini-2.5-flash` | Fast Gemini fallback |
+| DeepSeek | `deepseek/deepseek-chat` | Cost-effective reasoning |
+| DeepSeek | `deepseek/deepseek-reasoner` | Deep reasoning mode |
+| xAI | `xai/grok-4` | High-capability Grok |
+| xAI | `xai/grok-4-mini` | Fast Grok |
+| Groq | `groq/llama-3.3-70b-versatile` | Fast Meta Llama inference |
+| Groq | `groq/llama-3.1-8b-instant` | Ultra-low latency |
+| Groq | `groq/mixtral-8x7b-32768` | Mixtral MoE |
+| Together AI | `together/meta-llama/Llama-4-Maverick` | Meta's latest |
+| Together AI | `together/deepseek-ai/DeepSeek-V3` | DeepSeek on Together |
+| Fireworks | `fireworks/llama-v3p1-70b-instruct` | Fast Llama 3.1 70B |
+| MiniMax | `minimax/MiniMax-M2.7` | MiniMax model |
+| Ollama | `ollama/llama3.2` | Local inference |
 
 Any model supported by LiteLLM can be added. Edit `config/litellm.yaml` to add new providers or routes.
 
@@ -93,3 +103,20 @@ All LLM traffic flows through the LiteLLM proxy container (`port 4000`). This pr
 Configuration: `config/litellm.yaml`
 
 Authentication: set `LITELLM_MASTER_KEY` in your `.env` file.
+
+### Adding a New Provider
+
+1. Add the model entry to `config/litellm.yaml`:
+```yaml
+  - model_name: provider/model-id
+    litellm_params:
+      model: provider/model-id
+      api_key: os.environ/PROVIDER_API_KEY
+```
+
+2. Add the environment variable to `.env`:
+```bash
+PROVIDER_API_KEY=your-key
+```
+
+3. Add the model constant to `decepticon/llm/models.py` and assign it to agent roles.

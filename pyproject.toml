@@ -1,5 +1,5 @@
 [project]
-name = "decepticon"
+name = "botron"
 version = "1.0.6"
 description = "AI-powered autonomous red team testing framework"
 readme = "README.md"
@@ -46,7 +46,6 @@ dependencies = [
     "deepagents>=0.4.4",
     # CLI
     "typer[all]>=0.9.0",
-    "xxhash>=3.0.0",
     # Security
     "defusedxml>=0.7.0",
     # Graph memory (Neo4j attack-chain graph)
@@ -64,7 +63,7 @@ dev = [
 ]
 
 [project.scripts]
-decepticon-kg-health = "decepticon.tools.research.health:main"
+botron-kg-health = "botron.tools.research.health:main"
 
 [project.urls]
 Homepage = "https://github.com/PurpleAILAB/Decepticon"
@@ -75,7 +74,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["decepticon"]
+packages = ["botron"]
 
 [tool.ruff]
 line-length = 100
@@ -98,11 +97,11 @@ addopts = [
 ]
 
 [tool.coverage.run]
-source = ["decepticon"]
+source = ["botron"]
 branch = true
 omit = [
-    "decepticon/__main__.py",
-    "decepticon/auth/providers/*",
+    "botron/__main__.py",
+    "botron/auth/providers/*",
 ]
 
 [tool.coverage.html]
@@ -121,12 +120,12 @@ skip_covered = false
 
 [tool.basedpyright]
 pythonVersion = "3.13"
-include = ["decepticon", "tests", "benchmark"]
+include = ["botron", "tests", "benchmark"]
 exclude = [
     "**/__pycache__",
     "**/node_modules",
     "reference",
-    "decepticon/auth/providers",
+    "botron/auth/providers",
     "benchmark/xbow-validation-benchmarks",
 ]
 # Use pyright "standard" semantics rather than the basedpyright "all" default —

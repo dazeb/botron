@@ -2,7 +2,7 @@
 
 We invoke each @tool through its ``.invoke`` hook (LangChain tool
 interface) and parse the JSON it returns. Cache is pointed at
-``tmp_path`` via the ``DECEPTICON_REFERENCES_ROOT`` env var so no real
+``tmp_path`` via the ``BOTRON_REFERENCES_ROOT`` env var so no real
 filesystem state is touched.
 """
 
@@ -13,14 +13,14 @@ from pathlib import Path
 
 import pytest
 
-import decepticon.tools.references.cve_poc_index as cve_poc_index
-import decepticon.tools.references.h1_corpus as h1_corpus
-import decepticon.tools.references.killchain as killchain_mod
-import decepticon.tools.references.methodology as methodology_mod
-import decepticon.tools.references.oneliners as oneliners_mod
-import decepticon.tools.references.payloads_ingest as payloads_ingest
-from decepticon.tools.references import tools as T
-from decepticon.tools.references.fetch import cache_path
+import botron.tools.references.cve_poc_index as cve_poc_index
+import botron.tools.references.h1_corpus as h1_corpus
+import botron.tools.references.killchain as killchain_mod
+import botron.tools.references.methodology as methodology_mod
+import botron.tools.references.oneliners as oneliners_mod
+import botron.tools.references.payloads_ingest as payloads_ingest
+from botron.tools.references import tools as T
+from botron.tools.references.fetch import cache_path
 
 
 @pytest.fixture(autouse=True)

@@ -20,7 +20,7 @@ WEB_DIR       := clients/web
 
 # docker compose cannot expand ~ inside compose-file defaults, so resolve it
 # here before any subprocess inherits the env.
-export DECEPTICON_HOME ?= $(HOME)/.decepticon
+export BOTRON_HOME ?= $(HOME)/.botron
 
 .PHONY: help dev cli cli-dev web-dev infra \
         smoke clean status logs health \
@@ -81,7 +81,7 @@ cli:
 ## CLI locally (Node) — backend stays in Docker with hot-reload sync.
 cli-dev: infra
 	@$(COMPOSE_WATCH) watch --no-up --quiet langgraph &
-	cd clients/cli && DECEPTICON_API_URL=$${DECEPTICON_API_URL:-http://localhost:2024} npm run dev
+	cd clients/cli && BOTRON_API_URL=$${BOTRON_API_URL:-http://localhost:2024} npm run dev
 
 ## Next.js dev server locally — infra stays in Docker with hot-reload.
 web-dev: infra web-db-ensure
@@ -114,7 +114,7 @@ smoke:
 	@echo ""
 	@echo "[3/4] Starting services (--no-build --wait, OSS launcher flow)..."
 	$(COMPOSE) --profile cli up -d --no-build --wait \
-		--wait-timeout $${DECEPTICON_STARTUP_TIMEOUT_SECONDS:-600}
+		--wait-timeout $${BOTRON_STARTUP_TIMEOUT_SECONDS:-600}
 	@echo ""
 	@echo "[4/4] Health checks..."
 	@$(MAKE) -s health
@@ -190,15 +190,15 @@ web-migrate: web-install
 web-ee:
 	cd clients/ee && npm link
 	cd $(WEB_DIR) && npm link @decepticon/ee
-	@grep -q 'NEXT_PUBLIC_DECEPTICON_EDITION' $(WEB_DIR)/.env 2>/dev/null \
-		&& sed -i 's/NEXT_PUBLIC_DECEPTICON_EDITION=.*/NEXT_PUBLIC_DECEPTICON_EDITION=ee/' $(WEB_DIR)/.env \
-		|| echo 'NEXT_PUBLIC_DECEPTICON_EDITION=ee' >> $(WEB_DIR)/.env
+	@grep -q 'NEXT_PUBLIC_BOTRON_EDITION' $(WEB_DIR)/.env 2>/dev/null \
+		&& sed -i 's/NEXT_PUBLIC_BOTRON_EDITION=.*/NEXT_PUBLIC_BOTRON_EDITION=ee/' $(WEB_DIR)/.env \
+		|| echo 'NEXT_PUBLIC_BOTRON_EDITION=ee' >> $(WEB_DIR)/.env
 	@echo "EE linked — restart web-dev for SaaS mode"
 
 ## Unlink EE package (switch to OSS mode).
 web-oss:
 	cd $(WEB_DIR) && npm unlink @decepticon/ee 2>/dev/null; true
-	@sed -i '/NEXT_PUBLIC_DECEPTICON_EDITION/d' $(WEB_DIR)/.env 2>/dev/null; true
+	@sed -i '/NEXT_PUBLIC_BOTRON_EDITION/d' $(WEB_DIR)/.env 2>/dev/null; true
 	@echo "EE unlinked — restart web-dev for OSS mode"
 
 # ── Internal idempotent helpers ──────────────────────────────────
@@ -209,13 +209,13 @@ node-install:
 web-install:
 	@test -d $(WEB_DIR)/node_modules || npm install --prefix $(WEB_DIR)
 
-# postgres-init/01-create-web-db.sql auto-creates decepticon_web on fresh
+# postgres-init/01-create-web-db.sql auto-creates botron_web on fresh
 # volumes. This target only waits for postgres readiness and applies
 # Prisma migrations.
 web-db-ensure:
 	@echo "[web-db-ensure] Waiting for PostgreSQL..."
 	@for i in 1 2 3 4 5 6 7 8 9 10; do \
-		docker exec decepticon-postgres pg_isready -U decepticon -q 2>/dev/null && break; \
+		docker exec botron-postgres pg_isready -U decepticon -q 2>/dev/null && break; \
 		sleep 1; \
 	done
 	@cd $(WEB_DIR) && npx prisma migrate deploy 2>&1 | tail -1
@@ -231,7 +231,7 @@ demo: victims
 	@echo "Waiting for langgraph..."
 	@until curl -sf http://localhost:$${LANGGRAPH_PORT:-2024}/ok >/dev/null 2>&1; do sleep 2; done
 	$(COMPOSE) --profile cli run --rm --build \
-		-e DECEPTICON_INITIAL_MESSAGE="Resume the demo engagement and execute all objectives." \
+		-e BOTRON_INITIAL_MESSAGE="Resume the demo engagement and execute all objectives." \
 		cli
 
 ## Run benchmark suite (usage: make benchmark ARGS="--level 1")

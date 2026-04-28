@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import pytest
 
-from decepticon.backends import docker_sandbox as ds
-from decepticon.backends.docker_sandbox import (
+from botron.backends import docker_sandbox as ds
+from botron.backends.docker_sandbox import (
     MAX_OUTPUT_CHARS,
     PS1_PATTERN,
     TmuxSessionManager,
@@ -188,7 +188,7 @@ class TestConfigConstants:
     """Module-level constants should be sourced from DockerConfig defaults."""
 
     def test_constants_match_config_defaults(self) -> None:
-        from decepticon.core.config import DockerConfig
+        from botron.core.config import DockerConfig
 
         defaults = DockerConfig()
         assert ds.POLL_INTERVAL == defaults.poll_interval

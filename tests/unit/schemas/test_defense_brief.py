@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from decepticon.schemas.defense_brief import (
+from botron.schemas.defense_brief import (
     DefenseActionResult,
     DefenseActionType,
     DefenseBrief,

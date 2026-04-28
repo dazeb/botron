@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from decepticon.tools.research.graph import (
+from botron.tools.research.graph import (
     Edge,
     EdgeKind,
     KnowledgeGraph,

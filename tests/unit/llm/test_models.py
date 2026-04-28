@@ -2,7 +2,7 @@
 
 import pytest
 
-from decepticon.llm.models import (
+from botron.llm.models import (
     GPT_5,
     HAIKU,
     OPUS,
@@ -41,7 +41,7 @@ class TestModelAssignment:
 class TestLLMModelMapping:
     def test_default_roles_exist(self):
         mapping = LLMModelMapping()
-        assert mapping.decepticon is not None
+        assert mapping.botron is not None
         assert mapping.recon is not None
         assert mapping.exploit is not None
         assert mapping.analyst is not None
@@ -61,7 +61,7 @@ class TestLLMModelMapping:
     def test_strategic_agents_use_opus(self):
         """Orchestrator needs strongest reasoning — Opus 4.6."""
         mapping = LLMModelMapping()
-        assert mapping.get_assignment("decepticon").primary == OPUS
+        assert mapping.get_assignment("botron").primary == OPUS
 
     def test_precision_agent_uses_sonnet(self):
         """Exploit needs precision + tool calling balance — Sonnet 4.6."""
@@ -84,7 +84,7 @@ class TestLLMModelMapping:
         """Every role has a fallback for resilience (eco profile)."""
         mapping = LLMModelMapping()
         for role in (
-            "decepticon",
+            "botron",
             "soundwave",
             "exploit",
             "analyst",
@@ -101,7 +101,7 @@ class TestModelProfile:
         eco = LLMModelMapping.from_profile("eco")
         bare = LLMModelMapping()
         for role in (
-            "decepticon",
+            "botron",
             "soundwave",
             "exploit",
             "analyst",
@@ -114,7 +114,7 @@ class TestModelProfile:
     def test_max_profile_uses_opus_everywhere(self):
         """Max profile puts Opus on all roles except recon (Sonnet) and soundwave (Sonnet)."""
         maxp = LLMModelMapping.from_profile(ModelProfile.MAX)
-        for role in ("decepticon", "exploit", "analyst", "postexploit"):
+        for role in ("botron", "exploit", "analyst", "postexploit"):
             assert maxp.get_assignment(role).primary == OPUS
         assert maxp.get_assignment("recon").primary == SONNET
         assert maxp.get_assignment("soundwave").primary == SONNET
@@ -125,13 +125,13 @@ class TestModelProfile:
         for role in ("exploit", "analyst", "postexploit"):
             assert maxp.get_assignment(role).fallback == SONNET
         assert maxp.get_assignment("recon").fallback == OPUS
-        assert maxp.get_assignment("decepticon").fallback == GPT_5
+        assert maxp.get_assignment("botron").fallback == GPT_5
 
     def test_test_profile_all_haiku(self):
         """Test profile uses Haiku everywhere for minimum cost."""
         test = LLMModelMapping.from_profile("test")
         for role in (
-            "decepticon",
+            "botron",
             "soundwave",
             "exploit",
             "analyst",

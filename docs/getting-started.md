@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose v2
-- An API key for at least one LLM provider (Anthropic, OpenAI, Google, or MiniMax) — or an OAuth subscription (Claude Code, Codex)
+- An API key for at least one LLM provider (Anthropic, OpenAI, Google, DeepSeek, xAI, Groq, Together AI, Fireworks, or MiniMax)
 
 That's it. Everything else runs inside containers.
 
@@ -27,13 +27,12 @@ decepticon onboard
 
 The interactive setup wizard guides you through:
 
-1. **Authentication** — API key or OAuth (Claude Code, Codex)
-2. **Provider** — Anthropic, OpenAI, Google, or MiniMax
-3. **API Key** — Enter your provider key (skipped for OAuth)
-4. **Model Profile** — `eco` (balanced), `max` (performance), or `test` (development)
-5. **LangSmith** — Optional tracing for LLM observability
+1. **Provider** — Anthropic, OpenAI, Google, DeepSeek, xAI, Groq, Together AI, Fireworks, or MiniMax
+2. **API Key** — Enter your provider key
+3. **Model Profile** — `eco` (balanced), `max` (performance), or `test` (development)
+4. **LangSmith** — Optional tracing for LLM observability
 
-Configuration is saved to `~/.decepticon/.env`. Run `decepticon onboard --reset` to reconfigure.
+Configuration is saved to `~/.botron/.env`. Run `decepticon onboard --reset` to reconfigure.
 
 ---
 

@@ -3,8 +3,8 @@
 # =============================================================================
 # This file configures the LiteLLM Proxy server as the central LLM gateway.
 #
-# Model names use LiteLLM provider-prefix format (e.g., "anthropic/claude-opus-4-6")
-# matching the names in decepticon/llm/models.py. Agents send these names directly;
+# Model names use LiteLLM provider-prefix format (e.g., "anthropic/claude-sonnet-4-6")
+# matching the names in botron/llm/models.py. Agents send these names directly;
 # the proxy resolves them to the correct provider endpoint + API key.
 #
 # Features:
@@ -17,7 +17,7 @@
 # Docs: https://docs.litellm.ai/docs/proxy/configs
 
 # --- Model Definitions ---
-# model_name must match the constants in decepticon/llm/models.py exactly.
+# model_name must match the constants in botron/llm/models.py exactly.
 
 model_list:
   # ── Anthropic ────────────────────────────────────────────────────────
@@ -60,36 +60,68 @@ model_list:
       api_base: https://api.minimax.io/v1
       api_key: os.environ/MINIMAX_API_KEY
 
-  - model_name: minimax/MiniMax-M2.7-highspeed
+  # ── DeepSeek ─────────────────────────────────────────────────────────
+  - model_name: deepseek/deepseek-chat
     litellm_params:
-      model: openai/MiniMax-M2.7-highspeed
-      api_base: https://api.minimax.io/v1
-      api_key: os.environ/MINIMAX_API_KEY
+      model: deepseek/deepseek-chat
+      api_key: os.environ/DEEPSEEK_API_KEY
 
-  # ── Claude Code Auth (OAuth subscription) ────────────────────────────
-  - model_name: auth/claude-opus-4-6
+  - model_name: deepseek/deepseek-reasoner
     litellm_params:
-      model: auth/claude-opus-4-6
+      model: deepseek/deepseek-reasoner
+      api_key: os.environ/DEEPSEEK_API_KEY
 
-  - model_name: auth/claude-sonnet-4-6
+  # ── xAI / Grok ───────────────────────────────────────────────────────
+  - model_name: xai/grok-4
     litellm_params:
-      model: auth/claude-sonnet-4-6
+      model: openai/grok-4
+      api_base: https://api.x.ai/v1
+      api_key: os.environ/XAI_API_KEY
 
-  - model_name: auth/claude-haiku-4-5
+  - model_name: xai/grok-4-mini
     litellm_params:
-      model: auth/claude-haiku-4-5
+      model: openai/grok-4-mini
+      api_base: https://api.x.ai/v1
+      api_key: os.environ/XAI_API_KEY
+
+  # ── Groq (Llama, Mixtral inference) ──────────────────────────────────
+  - model_name: groq/llama-3.3-70b-versatile
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+
+  - model_name: groq/llama-3.1-8b-instant
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: os.environ/GROQ_API_KEY
+
+  - model_name: groq/mixtral-8x7b-32768
+    litellm_params:
+      model: groq/mixtral-8x7b-32768
+      api_key: os.environ/GROQ_API_KEY
+
+  # ── Together AI ──────────────────────────────────────────────────────
+  - model_name: together/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
+    litellm_params:
+      model: together_ai/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
+      api_key: os.environ/TOGETHER_API_KEY
+
+  - model_name: together/deepseek-ai/DeepSeek-V3
+    litellm_params:
+      model: together_ai/deepseek-ai/DeepSeek-V3
+      api_key: os.environ/TOGETHER_API_KEY
+
+  # ── Fireworks AI ─────────────────────────────────────────────────────
+  - model_name: fireworks/llama-v3p1-70b-instruct
+    litellm_params:
+      model: fireworks_ai/accounts/fireworks/models/llama-v3p1-70b-instruct
+      api_key: os.environ/FIREWORKS_API_KEY
 
   # ── Local LLM (Ollama) ──────────────────────────────────────────────
   - model_name: ollama/llama3.2
     litellm_params:
       model: ollama/llama3.2
       api_base: os.environ/OLLAMA_API_BASE
-
-# --- LiteLLM Settings ---
-litellm_settings:
-  custom_provider_map:
-    - provider: "auth"
-      custom_handler: claude_code_handler.claude_code_handler_instance
 
 # --- Router Settings ---
 router_settings:
