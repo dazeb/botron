@@ -43,7 +43,7 @@ const StatusLine = React.memo(function StatusLine({
   return (
     <Text>
       <Text dimColor>{"["}</Text>
-      <Text dimColor>{`Decepticon#${CLI_VERSION}`}</Text>
+      <Text dimColor>{`Botron#${CLI_VERSION}`}</Text>
       <Text dimColor>{" | "}</Text>
       {activeAgent ? (
         <Text color="#ef4444" bold={bright} dimColor={!bright}>

@@ -118,6 +118,16 @@ model_list:
       api_key: os.environ/FIREWORKS_API_KEY
 
   # ── Local LLM (Ollama) ──────────────────────────────────────────────
+  - model_name: ollama/qwen2.5-7b
+    litellm_params:
+      model: ollama/qwen2.5:7b
+      api_base: os.environ/OLLAMA_API_BASE
+
+  - model_name: ollama/gemma4-regular
+    litellm_params:
+      model: ollama/gemma4-regular:latest
+      api_base: os.environ/OLLAMA_API_BASE
+
   - model_name: ollama/llama3.2
     litellm_params:
       model: ollama/llama3.2
