@@ -65,6 +65,9 @@ MINIMAX_HIGHSPEED = "minimax/MiniMax-M2.7-highspeed"
 OLLAMA_LLAMA = "ollama/llama3.2"
 OLLAMA_QWEN = "ollama/qwen2.5-7b"
 OLLAMA_GEMMA = "ollama/gemma4-regular"
+OLLAMA_QWEN35 = "ollama/qwen3.5-abliterated"
+OR_SONNET = "openrouter/anthropic/claude-sonnet-4-6"
+OR_HAIKU = "openrouter/anthropic/claude-haiku-4-5"
 
 
 class ProxyConfig(BaseModel):
@@ -338,23 +341,23 @@ class LLMModelMapping(BaseModel):
 
         if profile == ModelProfile.LOCAL:
             return cls(
-                botron=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.4),
-                soundwave=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.4),
-                exploit=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.3),
-                analyst=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.2),
-                reverser=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.2),
-                contract_auditor=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.2),
+                botron=ModelAssignment(primary=OR_SONNET, temperature=0.4, max_tokens=4096),
+                soundwave=ModelAssignment(primary=OR_HAIKU, temperature=0.4, max_tokens=4096),
+                exploit=ModelAssignment(primary=OR_SONNET, temperature=0.3, max_tokens=4096),
+                analyst=ModelAssignment(primary=OR_HAIKU, temperature=0.2, max_tokens=4096),
+                reverser=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
+                contract_auditor=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 cloud_hunter=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 ad_operator=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 recon=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.3),
-                postexploit=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.3),
+                postexploit=ModelAssignment(primary=OLLAMA_QWEN35, temperature=0.3),
                 defender=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
-                vulnresearch=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.4),
+                vulnresearch=ModelAssignment(primary=OLLAMA_QWEN35, temperature=0.4),
                 scanner=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 detector=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 verifier=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
-                patcher=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.2),
-                exploiter=ModelAssignment(primary=OLLAMA_GEMMA, temperature=0.2),
+                patcher=ModelAssignment(primary=OLLAMA_QWEN35, temperature=0.2),
+                exploiter=ModelAssignment(primary=OLLAMA_QWEN35, temperature=0.2),
             )
 
         raise ValueError(f"Unknown profile: {profile}")  # type: ignore[unreachable]

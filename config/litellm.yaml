@@ -117,10 +117,26 @@ model_list:
       model: fireworks_ai/accounts/fireworks/models/llama-v3p1-70b-instruct
       api_key: os.environ/FIREWORKS_API_KEY
 
+  # ── OpenRouter ───────────────────────────────────────────────────────
+  - model_name: openrouter/anthropic/claude-sonnet-4-6
+    litellm_params:
+      model: openrouter/anthropic/claude-sonnet-4-6
+      api_key: os.environ/OPENROUTER_API_KEY
+
+  - model_name: openrouter/anthropic/claude-haiku-4-5
+    litellm_params:
+      model: openrouter/anthropic/claude-haiku-4-5
+      api_key: os.environ/OPENROUTER_API_KEY
+
   # ── Local LLM (Ollama) ──────────────────────────────────────────────
   - model_name: ollama/qwen2.5-7b
     litellm_params:
       model: ollama/qwen2.5:7b
+      api_base: os.environ/OLLAMA_API_BASE
+
+  - model_name: ollama/qwen3.5-abliterated
+    litellm_params:
+      model: ollama/huihui_ai/qwen3.5-abliterated:9b
       api_base: os.environ/OLLAMA_API_BASE
 
   - model_name: ollama/gemma4-regular
