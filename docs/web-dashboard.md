@@ -10,7 +10,7 @@ The web dashboard is an open-source (Apache 2.0) browser-based control plane for
 
 **End users:**
 ```bash
-decepticon
+botron
 ```
 The dashboard is part of the default service stack. Open <http://localhost:3000>.
 
@@ -88,10 +88,10 @@ Per-objective progress board:
 
 **OSS mode** (default): No login required. All data belongs to a single `local` user. Suitable for individual operators and self-hosted deployments.
 
-**EE mode** (Enterprise Edition): Links the private `@decepticon/ee` package. Requires a separate license.
+**EE mode** (Enterprise Edition): Links the private `@botron/ee` package. Requires a separate license.
 
 ```bash
-make web-ee    # Switch to EE mode (links @decepticon/ee)
+make web-ee    # Switch to EE mode (links @botron/ee)
 make web-oss   # Switch back to OSS mode
 make dev       # Restart after switching
 ```

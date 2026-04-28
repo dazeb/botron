@@ -6,7 +6,7 @@ The graph lives on `sandbox-net` and is accessible at:
 - **Bolt**: `bolt://localhost:7687` (driver connection)
 - **Browser**: `http://localhost:7474` (Neo4j Browser UI)
 
-Default credentials: `neo4j` / `decepticon-graph` (set via `NEO4J_PASSWORD`).
+Default credentials: `neo4j` / `botron-graph` (set via `NEO4J_PASSWORD`).
 
 ---
 
@@ -41,7 +41,7 @@ Default credentials: `neo4j` / `decepticon-graph` (set via `NEO4J_PASSWORD`).
 
 ## Research Tools
 
-Agents interact with the graph via tools defined in `decepticon/tools/research/tools.py`:
+Agents interact with the graph via tools defined in `botron/tools/research/tools.py`:
 
 ### Graph Mutations
 
@@ -78,10 +78,10 @@ Agents interact with the graph via tools defined in `decepticon/tools/research/t
 ## Health Diagnostics
 
 ```bash
-decepticon kg-health
+botron kg-health
 ```
 
-Runs `decepticon.tools.research.health:main` and reports:
+Runs `botron.tools.research.health:main` and reports:
 - Neo4j connectivity status
 - Node and edge counts by type
 - Index health

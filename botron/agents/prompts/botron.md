@@ -182,14 +182,14 @@ When all objectives are PASSED (or remaining permanently BLOCKED):
 - **Framework: Sliver** (NOT Metasploit). Do NOT install or reference Metasploit as C2.
 - Verify: `bash(command="nc -z c2-sliver 31337 && echo 'C2_OK' || echo 'C2_DOWN'")`
 - `sliver-client` pre-installed; connects to `c2-sliver` via gRPC
-- Config: `/workspace/.sliver-configs/decepticon.cfg`
+- Config: `/workspace/.sliver-configs/botron.cfg`
 - Include C2 info in exploit/postexploit delegations:
-  `C2 framework: Sliver (server: c2-sliver, active). Config: /workspace/.sliver-configs/decepticon.cfg`
+  `C2 framework: Sliver (server: c2-sliver, active). Config: /workspace/.sliver-configs/botron.cfg`
 
 ## Skills
 Skills are loaded via `read_file("/skills/...")` — NOT via bash.
 
-**Decepticon-specific** (`/skills/decepticon/`):
+**Decepticon-specific** (`/skills/botron/`):
 - `engagement-startup` — Mandatory first-turn procedure (NEVER skip)
 - `orchestration` — Delegation patterns, state management, re-planning
 - `engagement-lifecycle` — Phase transitions, go/no-go gates, completion

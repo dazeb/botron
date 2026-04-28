@@ -8,7 +8,7 @@ import { getEE } from "@/lib/ee";
 
 function notConfigured() {
   return NextResponse.json(
-    { error: "Authentication not configured. Install @decepticon/ee for auth support." },
+    { error: "Authentication not configured. Install @botron/ee for auth support." },
     { status: 404 }
   );
 }

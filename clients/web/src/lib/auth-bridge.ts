@@ -39,7 +39,7 @@ export async function requireAuth(): Promise<AuthResult> {
   // Guard: EE is present but auth is not configured — fail-fast
   if (hasEE() && !ee.auth) {
     throw new AuthError(
-      "@decepticon/ee is installed but auth is not configured. " +
+      "@botron/ee is installed but auth is not configured. " +
       "Wire the auth field in the EE package or remove EE for OSS mode."
     );
   }

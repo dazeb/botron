@@ -52,7 +52,7 @@ const engagementNav: NavItem[] = [
   { href: "/graph", label: "Attack Graph", icon: Network, engagementScoped: true },
 ];
 
-// EE-only navigation — visible when @decepticon/ee is installed
+// EE-only navigation — visible when @botron/ee is installed
 const eeNav: NavItem[] = [
   { href: "/domains", label: "Domains", icon: Globe },
   { href: "/settings/org", label: "Organization", icon: Building },

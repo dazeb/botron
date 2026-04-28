@@ -50,7 +50,7 @@ Skills live in `skills/` organized by agent role:
 | `skills/patcher/` | Patcher | Remediation code, configuration hardening |
 | `skills/analyst/` | Analyst | Research, graph querying, executive summaries |
 | `skills/vulnresearch/` | Scanner, Detector | Vulnerability research pipeline |
-| `skills/decepticon/` | Decepticon | Core orchestration procedures |
+| `skills/botron/` | Botron | Core orchestration procedures |
 
 ---
 
@@ -180,7 +180,7 @@ The skill is automatically available to agents whose source paths include your s
 
 | Agent | Skill sources |
 |-------|--------------|
-| Decepticon | `skills/decepticon/` |
+| Botron | `skills/botron/` |
 | Soundwave | `skills/soundwave/` |
 | Recon | `skills/recon/`, `skills/shared/` |
 | Scanner | `skills/scanner/`, `skills/vulnresearch/`, `skills/shared/` |

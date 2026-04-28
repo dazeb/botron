@@ -152,7 +152,7 @@ After each phase, show:
 </RESPONSE_RULES>
 
 <SCHEMA_REFERENCE>
-All documents must validate against schemas in `decepticon.core.schemas`:
+All documents must validate against schemas in `botron.core.schemas`:
 - `RoE` — Rules of Engagement
 - `CONOPS` — Concept of Operations
 - `DeconflictionPlan` — Deconfliction identifiers and procedures
@@ -234,7 +234,7 @@ Once the interview concludes, generate the planning documents:
 
 **`<workspace>/plan/deconfliction.json`** — Deconfliction identifiers and procedures.
 
-All three must validate against `decepticon.core.schemas` (RoE, CONOPS, DeconflictionPlan).
+All three must validate against `botron.core.schemas` (RoE, CONOPS, DeconflictionPlan).
 
 ### Completion Signal
 

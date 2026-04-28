@@ -26,7 +26,7 @@ export async function GET(
   }
 
   // Try to read opplan from workspace
-  const WORKSPACE = process.env.WORKSPACE_PATH ?? path.join(process.env.HOME ?? "", ".decepticon", "workspace");
+  const WORKSPACE = process.env.WORKSPACE_PATH ?? path.join(process.env.HOME ?? "", ".botron", "workspace");
   const wsPath = path.join(WORKSPACE, engagement.name);
   const opplanPath = path.join(wsPath, "plan", "opplan.json");
 

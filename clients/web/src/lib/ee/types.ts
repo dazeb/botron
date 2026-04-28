@@ -43,7 +43,7 @@ export interface EEAuthProvider {
 }
 
 /**
- * EE feature registry — `@decepticon/ee` implements this interface.
+ * EE feature registry — `@botron/ee` implements this interface.
  * OSS mode: all fields are undefined (empty object from loader).
  */
 export interface EEFeatures {

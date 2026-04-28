@@ -1,7 +1,7 @@
 <!-- THIS FILE IS NO LONGER LOADED AS A SHARED PROMPT FRAGMENT.
 
 Skill system instructions are now injected dynamically by DecepticonSkillsMiddleware
-(decepticon/middleware/skills.py) via the wrap_model_call() hook. The middleware
+(botron/middleware/skills.py) via the wrap_model_call() hook. The middleware
 provides:
 
   - Red-team-specific system prompt template
@@ -17,5 +17,5 @@ Now agents use:
 
 And the middleware handles skill catalog injection on every LLM call.
 
-See: decepticon/middleware/skills.py :: BOTRON_SKILLS_PROMPT
+See: botron/middleware/skills.py :: BOTRON_SKILLS_PROMPT
 -->

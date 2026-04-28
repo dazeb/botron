@@ -9,7 +9,7 @@
     { "target": "botron-msf2", "type": "host", "notes": "All ports and services." }
   ],
   "out_of_scope": [
-    { "target": "decepticon-*", "type": "host", "notes": "All infrastructure containers except botron-msf2." }
+    { "target": "botron-*", "type": "host", "notes": "All infrastructure containers except botron-msf2." }
   ],
   "prohibited_actions": [
     "DoS attacks",

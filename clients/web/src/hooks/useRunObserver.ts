@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * useRunObserver — real-time observation of LangGraph runs via @decepticon/streaming.
+ * useRunObserver — real-time observation of LangGraph runs via @botron/streaming.
  *
  * Uses the shared streaming library (same as CLI) to process LangGraph events.
  * No custom parsing — SubagentCustomEvent is the canonical event type.
@@ -11,14 +11,14 @@
  *                                                                        ↓
  *   CLI ──submit──→ LangGraph Server ←──joinStream──── useRunObserver(threadId)
  *                                                           ↓
- *                                              @decepticon/streaming (shared)
+ *                                              @botron/streaming (shared)
  *                                                    ↓              ↓
  *                                              CLI (Ink UI)    Web (Canvas Graph)
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Client } from "@langchain/langgraph-sdk";
-import { type SubagentCustomEvent, STREAM_OPTIONS } from "@decepticon/streaming";
+import { type SubagentCustomEvent, STREAM_OPTIONS } from "@botron/streaming";
 
 const POLL_INTERVAL = 2000;
 
@@ -124,7 +124,7 @@ export function useRunObserver({ threadId }: UseRunObserverOptions): UseRunObser
             setEvents([...eventsRef.current]);
           }
         } else if (event.event === "values") {
-          // Extract orchestrator (decepticon) tool calls from message history
+          // Extract orchestrator (botron) tool calls from message history
           const data = event.data as { messages?: Array<{
             type: string;
             name?: string;
@@ -138,8 +138,8 @@ export function useRunObserver({ threadId }: UseRunObserverOptions): UseRunObser
               for (const tc of lastMsg.tool_calls) {
                 if (tc.name === "task") continue; // Sub-agent delegation — handled by custom events
                 // Orchestrator's own tool call
-                if (!seenToolCalls.has(`decepticon-${tc.name}-${data.messages.length}`)) {
-                  seenToolCalls.add(`decepticon-${tc.name}-${data.messages.length}`);
+                if (!seenToolCalls.has(`botron-${tc.name}-${data.messages.length}`)) {
+                  seenToolCalls.add(`botron-${tc.name}-${data.messages.length}`);
                   newEvents.push({
                     type: "subagent_tool_call",
                     agent: "botron",
@@ -150,7 +150,7 @@ export function useRunObserver({ threadId }: UseRunObserverOptions): UseRunObser
               }
             } else if (lastMsg?.type === "tool" && lastMsg.name) {
               if (lastMsg.name !== "task") {
-                const key = `decepticon-${lastMsg.name}-result-${data.messages.length}`;
+                const key = `botron-${lastMsg.name}-result-${data.messages.length}`;
                 if (!seenToolCalls.has(key)) {
                   seenToolCalls.add(key);
                   newEvents.push({

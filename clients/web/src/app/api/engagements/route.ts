@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import * as fs from "fs/promises";
 import * as path from "path";
 
-const WORKSPACE = process.env.WORKSPACE_PATH ?? path.join(process.env.HOME ?? "", ".decepticon", "workspace");
+const WORKSPACE = process.env.WORKSPACE_PATH ?? path.join(process.env.HOME ?? "", ".botron", "workspace");
 
 const WORKSPACE_SUBDIRS = ["plan", "recon", "exploit", "findings", "post-exploit"];
 

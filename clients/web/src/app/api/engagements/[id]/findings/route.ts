@@ -106,7 +106,7 @@ export async function GET(
   const findings: Finding[] = [];
 
   {
-    const WORKSPACE = process.env.WORKSPACE_PATH ?? path.join(process.env.HOME ?? "", ".decepticon", "workspace");
+    const WORKSPACE = process.env.WORKSPACE_PATH ?? path.join(process.env.HOME ?? "", ".botron", "workspace");
     const wsPath = path.join(WORKSPACE, engagement.name);
     const findingsDir = path.join(wsPath, "findings");
     try {

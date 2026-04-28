@@ -82,6 +82,6 @@ For each verification work item:
   negative = benign input; negative pattern = a normal response line.
 - **Path traversal**: fetch ``/etc/passwd``; success pattern = ``root:``;
   negative = normal filename; negative pattern = normal content.
-- **Deserialization**: gadget that writes a file to ``/tmp/decepticon-<rand>``;
+- **Deserialization**: gadget that writes a file to ``/tmp/botron-<rand>``;
   success pattern = that file existing after the request.
 </PROOF_PATTERNS>

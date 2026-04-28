@@ -31,7 +31,7 @@ Decepticon은 레드팀 테스트 도메인에 특화된 에이전트이므로,
 
 ### 변경 동기
 
-현재 오케스트레이터(`decepticon.py`)는:
+현재 오케스트레이터(`botron.py`)는:
 1. `TodoListMiddleware` — 범용 todo 추적 (도메인 맥락 없음)
 2. `write_file("opplan.json")` — 수동 JSON 파일 작성으로 OPPLAN 업데이트
 3. 별도 `planner` 서브에이전트 — OPPLAN 생성을 포함한 모든 계획 문서 담당
@@ -118,7 +118,7 @@ OPPLAN이 LangGraph state에 존재하므로:
 
 ## Implementation
 
-### File: `decepticon/middleware/opplan.py`
+### File: `botron/middleware/opplan.py`
 
 #### State Schema
 
@@ -533,33 +533,33 @@ def after_model(self, state, runtime):
 
 | File | Description |
 |---|---|
-| `decepticon/middleware/opplan.py` | OPPLANMiddleware 구현 (5-tool CRUD) |
-| `decepticon/agents/soundwave.py` | Soundwave 에이전트 (planner.py에서 리네임 + 역할 축소) |
-| `decepticon/agents/prompts/soundwave.md` | Soundwave 프롬프트 |
+| `botron/middleware/opplan.py` | OPPLANMiddleware 구현 (5-tool CRUD) |
+| `botron/agents/soundwave.py` | Soundwave 에이전트 (planner.py에서 리네임 + 역할 축소) |
+| `botron/agents/prompts/soundwave.md` | Soundwave 프롬프트 |
 
 #### Modified Files
 
 | File | Change |
 |---|---|
-| `decepticon/middleware/__init__.py` | `OPPLANMiddleware` export 추가 |
-| `decepticon/agents/decepticon.py` | `TodoListMiddleware` → `OPPLANMiddleware`, planner → soundwave |
-| `decepticon/agents/prompts/decepticon.md` | OPPLAN 도구 사용 + Soundwave 역할 반영 |
+| `botron/middleware/__init__.py` | `OPPLANMiddleware` export 추가 |
+| `botron/agents/botron.py` | `TodoListMiddleware` → `OPPLANMiddleware`, planner → soundwave |
+| `botron/agents/prompts/botron.md` | OPPLAN 도구 사용 + Soundwave 역할 반영 |
 
 #### Removed Files
 
 | File | Reason |
 |---|---|
-| `decepticon/agents/planner.py` | `soundwave.py`로 교체 |
-| `decepticon/agents/prompts/planning.md` | `soundwave.md`로 교체 |
+| `botron/agents/planner.py` | `soundwave.py`로 교체 |
+| `botron/agents/prompts/planning.md` | `soundwave.md`로 교체 |
 
 #### Unchanged Files
 
 | File | Reason |
 |---|---|
-| `decepticon/core/schemas.py` | `Objective`, `OPPLAN` 스키마 재사용 (변경 없음) |
-| `decepticon/agents/recon.py` | OPPLANMiddleware 불필요 (서브에이전트) |
-| `decepticon/agents/exploit.py` | OPPLANMiddleware 불필요 (서브에이전트) |
-| `decepticon/agents/postexploit.py` | OPPLANMiddleware 불필요 (서브에이전트) |
+| `botron/core/schemas.py` | `Objective`, `OPPLAN` 스키마 재사용 (변경 없음) |
+| `botron/agents/recon.py` | OPPLANMiddleware 불필요 (서브에이전트) |
+| `botron/agents/exploit.py` | OPPLANMiddleware 불필요 (서브에이전트) |
+| `botron/agents/postexploit.py` | OPPLANMiddleware 불필요 (서브에이전트) |
 
 ### Orchestrator Middleware Stack
 
@@ -583,7 +583,7 @@ middleware = [
 ]
 ```
 
-### Prompt Update: `agents/prompts/decepticon.md`
+### Prompt Update: `agents/prompts/botron.md`
 
 ```markdown
 ## Execution Loop (Before)

@@ -30,7 +30,7 @@ make cli
 ## Project Structure
 
 ```
-decepticon/          # Core Python package (LangGraph agents, middleware, tools)
+botron/          # Core Python package (LangGraph agents, middleware, tools)
 ├── agents/          # Agent factory functions (create_*_agent)
 ├── core/            # Engagement loop, schemas, logging
 ├── llm/             # Model profiles, LiteLLM configuration
@@ -42,7 +42,7 @@ skills/              # Skill library (SKILL.md files organized by kill chain pha
 clients/
 ├── cli/             # TypeScript/Ink terminal UI
 ├── web/             # Next.js 16 web dashboard
-└── shared/          # Shared streaming utilities (@decepticon/streaming)
+└── shared/          # Shared streaming utilities (@botron/streaming)
 
 config/              # LiteLLM proxy config (litellm.yaml)
 containers/          # Dockerfile per service
@@ -73,7 +73,7 @@ Minimum Python version: **3.13**
 
 ## Adding an Agent
 
-1. Create `decepticon/agents/{name}.py` with a `create_{name}_agent()` factory function
+1. Create `botron/agents/{name}.py` with a `create_{name}_agent()` factory function
 2. Follow the middleware stack pattern from an existing agent (e.g., `recon.py`)
 3. Define the agent's skill sources in the `SkillsMiddleware` configuration
 4. Register the agent in the orchestrator's dispatch table
@@ -95,7 +95,7 @@ No registration required. Skills are discovered automatically from the agent's c
 
 ## Testing
 
-Python tests live in `decepticon/tests/`. Run inside Docker for a clean environment:
+Python tests live in `botron/tests/`. Run inside Docker for a clean environment:
 
 ```bash
 make test            # pytest in container
@@ -105,10 +105,10 @@ make test-local      # pytest locally (requires: uv sync --dev)
 CLI tests run via `make quality-cli` (typecheck + build + vitest), or directly:
 
 ```bash
-npm run test --workspace=@decepticon/cli
+npm run test --workspace=@botron/cli
 ```
 
-When adding a new agent or tool, add corresponding tests in `decepticon/tests/`.
+When adding a new agent or tool, add corresponding tests in `botron/tests/`.
 
 ---
 

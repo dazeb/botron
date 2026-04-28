@@ -1,11 +1,11 @@
 {
-  "name": "@decepticon/cli",
+  "name": "@botron/cli",
   "version": "1.0.5",
   "description": "Decepticon Ink CLI — terminal interface for LangGraph Platform agents",
   "type": "module",
   "main": "src/index.tsx",
   "bin": {
-    "decepticon-ink": "src/index.tsx"
+    "botron-ink": "src/index.tsx"
   },
   "scripts": {
     "start": "node --import tsx/esm src/index.tsx",
@@ -16,7 +16,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@decepticon/streaming": "*",
+    "@botron/streaming": "*",
     "@inkjs/ui": "^2.0.0",
     "@langchain/langgraph-sdk": "^1.8.8",
     "@types/diff": "^8.0.0",

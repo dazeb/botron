@@ -40,7 +40,7 @@ Ask these questions in **two rounds** (batch related questions to minimize back-
 
 ### Step 2: Generate roe.json
 
-Use the `RoE` schema from `decepticon.core.schemas`. Write to the engagement directory.
+Use the `RoE` schema from `botron.core.schemas`. Write to the engagement directory.
 
 See `references/roe-example.json` for a complete example and `../references/schema-quick-reference.md` for all required fields and valid values.
 

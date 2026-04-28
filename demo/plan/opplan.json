@@ -64,7 +64,7 @@
       "concessions": [],
       "blocked_by": ["OBJ-002"],
       "owner": "",
-      "notes": "C2 framework: Sliver (server: c2-sliver). Config: /workspace/.sliver-configs/decepticon.cfg"
+      "notes": "C2 framework: Sliver (server: c2-sliver). Config: /workspace/.sliver-configs/botron.cfg"
     },
     {
       "id": "OBJ-004",

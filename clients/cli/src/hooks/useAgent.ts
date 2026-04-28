@@ -23,7 +23,7 @@ import {
   STREAM_OPTIONS,
   extractText,
   stripResultTags,
-} from "@decepticon/streaming";
+} from "@botron/streaming";
 
 interface LangChainMessage {
   type: string; // "human", "ai", "tool"
@@ -295,7 +295,7 @@ export function useAgent({
 
           case "engagement_ready": {
             // Soundwave finished writing the planning bundle. Flip the
-            // active assistant so the next submit() lands on decepticon.
+            // active assistant so the next submit() lands on botron.
             // The current run continues to completion (soundwave's closing
             // message); thread handoff fires from handleStreamComplete.
             const slug = data.engagement ?? "";
@@ -525,7 +525,7 @@ export function useAgent({
 
       // Engagement handoff: soundwave's complete_engagement_planning tool
       // flipped assistantIdRef to "botron" during this run. Drop the
-      // soundwave thread so the next submit opens a fresh decepticon
+      // soundwave thread so the next submit opens a fresh botron
       // thread. Reset askedQuestionIds since they were per-thread.
       if (pendingHandoffRef.current) {
         threadIdRef.current = null;

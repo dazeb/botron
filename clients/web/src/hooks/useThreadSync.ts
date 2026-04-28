@@ -18,7 +18,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Client } from "@langchain/langgraph-sdk";
 import type { ChatMessage } from "@/lib/chat/types";
-import { extractText, stripResultTags } from "@decepticon/streaming";
+import { extractText, stripResultTags } from "@botron/streaming";
 
 const POLL_INTERVAL = 2000; // 2s
 
@@ -48,7 +48,7 @@ interface UseThreadSyncReturn {
 
 function loadThreadId(engagementId: string): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(`decepticon:thread:${engagementId}`) ?? null;
+  return localStorage.getItem(`botron:thread:${engagementId}`) ?? null;
 }
 
 export function useThreadSync({

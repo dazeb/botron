@@ -4,29 +4,29 @@
 
 | Command | Description |
 |---------|-------------|
-| `decepticon` | Start all services, open the terminal UI, and print the web dashboard URL |
-| `decepticon onboard` | Interactive setup wizard (provider, API key, model profile, LangSmith) |
-| `decepticon onboard --reset` | Reconfigure even if `.env` already exists |
-| `decepticon demo` | Run guided demo (Metasploitable 2, full kill chain + Sliver C2) |
-| `decepticon stop` | Stop all services |
-| `decepticon status` | Show service status |
-| `decepticon logs [service]` | Follow service logs (default: `langgraph`) |
-| `decepticon kg-health` | Diagnose the Neo4j knowledge graph |
-| `decepticon update` | Check for updates and apply them |
-| `decepticon remove` | Uninstall Decepticon completely |
-| `decepticon --version` | Show installed version |
+| `botron` | Start all services, open the terminal UI, and print the web dashboard URL |
+| `botron onboard` | Interactive setup wizard (provider, API key, model profile, LangSmith) |
+| `botron onboard --reset` | Reconfigure even if `.env` already exists |
+| `botron demo` | Run guided demo (Metasploitable 2, full kill chain + Sliver C2) |
+| `botron stop` | Stop all services |
+| `botron status` | Show service status |
+| `botron logs [service]` | Follow service logs (default: `langgraph`) |
+| `botron kg-health` | Diagnose the Neo4j knowledge graph |
+| `botron update` | Check for updates and apply them |
+| `botron remove` | Uninstall Decepticon completely |
+| `botron --version` | Show installed version |
 
-> **Web dashboard** is included in the default stack. After `decepticon` starts, the dashboard is available at `http://localhost:3000` (configurable via `WEB_PORT` in `.env`).
+> **Web dashboard** is included in the default stack. After `botron` starts, the dashboard is available at `http://localhost:3000` (configurable via `WEB_PORT` in `.env`).
 
-### `decepticon logs` — Service names
+### `botron logs` — Service names
 
 ```bash
-decepticon logs             # langgraph (default)
-decepticon logs litellm     # LiteLLM proxy
-decepticon logs postgres    # PostgreSQL
-decepticon logs neo4j       # Neo4j graph database
-decepticon logs sandbox     # Kali Linux sandbox
-decepticon logs web         # Web dashboard
+botron logs             # langgraph (default)
+botron logs litellm     # LiteLLM proxy
+botron logs postgres    # PostgreSQL
+botron logs neo4j       # Neo4j graph database
+botron logs sandbox     # Kali Linux sandbox
+botron logs web         # Web dashboard
 ```
 
 ---
@@ -86,7 +86,7 @@ Available inside the interactive terminal UI:
 
 ## Environment Variables
 
-These can be set in your `.env` file (configure with `decepticon onboard`) or as shell environment variables.
+These can be set in your `.env` file (configure with `botron onboard`) or as shell environment variables.
 
 ### Required (at least one LLM key)
 
@@ -109,10 +109,10 @@ See [Models](models.md) for full profile details.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LITELLM_MASTER_KEY` | `sk-decepticon-master` | LiteLLM proxy auth key |
-| `LITELLM_SALT_KEY` | `sk-decepticon-salt-change-me` | LiteLLM salt (change in production) |
-| `POSTGRES_PASSWORD` | `decepticon` | PostgreSQL password |
-| `NEO4J_PASSWORD` | `decepticon-graph` | Neo4j password |
+| `LITELLM_MASTER_KEY` | `sk-botron-master` | LiteLLM proxy auth key |
+| `LITELLM_SALT_KEY` | `sk-botron-salt` | LiteLLM salt (change in production) |
+| `POSTGRES_PASSWORD` | `botron` | PostgreSQL password |
+| `NEO4J_PASSWORD` | `botron-graph` | Neo4j password |
 
 ### Ports (optional)
 
@@ -136,7 +136,7 @@ Currently supported profiles: `c2-sliver`. Future: `c2-havoc`.
 |----------|-------------|
 | `LANGSMITH_TRACING` | Set to `true` to enable LangSmith tracing |
 | `LANGSMITH_API_KEY` | LangSmith API key |
-| `LANGSMITH_PROJECT` | LangSmith project name (default: `decepticon`) |
+| `LANGSMITH_PROJECT` | LangSmith project name (default: `botron`) |
 
 ### Debug
 

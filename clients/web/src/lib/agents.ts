@@ -62,7 +62,7 @@ export const KILL_CHAIN_PHASES: KillChainPhase[] = [
 // ── Display config (frontend-only visual metadata) ──
 
 export const AGENT_DISPLAY_CONFIG: Record<string, AgentDisplayMeta> = {
-  decepticon: {
+  botron: {
     name: "Decepticon",
     description: "Main orchestrator — commands the full kill chain",
     mascot: "Red-Eyed Armored Skink Gecko",

@@ -18,7 +18,7 @@ const REQUIRED_PLAN_DOCS = ["roe", "conops", "deconfliction"] as const;
  *
  * The launcher's engagement.Select makes the same choice for the CLI: an
  * engagement with all three planning docs is "ready" and routes to
- * decepticon; anything missing means soundwave still has an interview to
+ * botron; anything missing means soundwave still has an interview to
  * run. plan-docs is the source of truth — engagement.status drifts when
  * the operator switches between web and CLI.
  */

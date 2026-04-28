@@ -71,7 +71,7 @@ Use the [Feature Request](https://github.com/PurpleAILAB/Decepticon/issues/new?t
 ## Project Structure
 
 ```
-decepticon/          Python agents, core logic, backends
+botron/          Python agents, core logic, backends
 clients/cli/         Ink.js terminal UI (TypeScript)
 skills/              Markdown knowledge base for agents
 containers/          Dockerfiles

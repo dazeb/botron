@@ -84,5 +84,5 @@ export interface ActiveQuestion {
   allowOther: boolean;
 }
 
-// SubAgentSession is exported from @decepticon/streaming
-export type { SubAgentSession } from "@decepticon/streaming";
+// SubAgentSession is exported from @botron/streaming
+export type { SubAgentSession } from "@botron/streaming";

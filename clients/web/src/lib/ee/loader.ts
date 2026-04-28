@@ -5,11 +5,11 @@ let _resolved = false;
 
 // Package name constructed at runtime to prevent bundler static analysis.
 // Turbopack/webpack cannot resolve dynamically constructed module names,
-// so this avoids "Module not found" warnings when @decepticon/ee is absent.
-const EE_PKG = ["@decepticon", "ee"].join("/");
+// so this avoids "Module not found" warnings when @botron/ee is absent.
+const EE_PKG = ["@botron", "ee"].join("/");
 
 /**
- * Load EE features from `@decepticon/ee`.
+ * Load EE features from `@botron/ee`.
  * Server-only: EE contains Node.js modules (dns, crypto) that can't run in the browser.
  * On the client side, always returns empty object.
  */

@@ -9,7 +9,7 @@
 
 export const AGENT_LABELS: Record<string, string> = {
   // Orchestrator
-  decepticon: "Decepticon",
+  botron: "Botron",
 
   // Document generation
   soundwave: "Soundwave",

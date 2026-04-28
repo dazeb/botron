@@ -1,6 +1,6 @@
 # Makefile Reference
 
-The Makefile is for **local development and pre-release verification**. Every Docker target builds from your local checkout. End users install via `curl | bash` and run `decepticon` — they don't use `make`.
+The Makefile is for **local development and pre-release verification**. Every Docker target builds from your local checkout. End users install via `curl | bash` and run `botron` — they don't use `make`.
 
 Run `make help` for a quick summary. Full reference below.
 
@@ -35,7 +35,7 @@ The Web dashboard is part of the default Compose stack; after `make dev` it's re
 |--------|-------------|
 | `make smoke` | Replicates the OSS user start path on local code: clean → build images from local → `compose up -d --no-build --wait` → health checks. Use this before tagging a release. |
 
-The `up` flags (`--no-build --wait --wait-timeout`) match the launcher's `compose.Up` exactly, so smoke validates the same path an installed `decepticon` user takes — but with whatever code you have checked out instead of GHCR-published images.
+The `up` flags (`--no-build --wait --wait-timeout`) match the launcher's `compose.Up` exactly, so smoke validates the same path an installed `botron` user takes — but with whatever code you have checked out instead of GHCR-published images.
 
 ---
 
@@ -45,8 +45,8 @@ The `up` flags (`--no-build --wait --wait-timeout`) match the launcher's `compos
 |--------|-------------|
 | `make status` | Show running service status (`docker compose ps`) |
 | `make logs [SVC=service]` | Follow logs (default: `langgraph`). Override: `make logs SVC=litellm` |
-| `make health` | KG backend + Neo4j + Web health checks (parity with `decepticon health`) |
-| `make clean` | Stop services and remove all volumes (parity with `decepticon remove`) |
+| `make health` | KG backend + Neo4j + Web health checks (parity with `botron health`) |
+| `make clean` | Stop services and remove all volumes (parity with `botron remove`) |
 
 ---
 
@@ -68,7 +68,7 @@ The `up` flags (`--no-build --wait --wait-timeout`) match the launcher's `compos
 | `make test [ARGS=...]` | Run Python tests (`pytest`) inside the Docker container |
 | `make test-local [ARGS=...]` | Run Python tests locally (requires `uv sync --dev`) |
 
-CLI tests are part of `make quality-cli`. To run them in isolation: `npm run test --workspace=@decepticon/cli`.
+CLI tests are part of `make quality-cli`. To run them in isolation: `npm run test --workspace=@botron/cli`.
 
 ---
 
@@ -80,7 +80,7 @@ CLI tests are part of `make quality-cli`. To run them in isolation: `npm run tes
 | `make web-build` | Build the web dashboard (also generates the Prisma client) |
 | `make web-lint` | Lint the web dashboard (ESLint) |
 | `make web-migrate [NAME=name]` | Run a Prisma dev migration |
-| `make web-ee` | Link the Enterprise Edition package (`@decepticon/ee`) |
+| `make web-ee` | Link the Enterprise Edition package (`@Botron/ee`) |
 | `make web-oss` | Unlink the EE package — revert to OSS mode |
 
 To regenerate just the Prisma client (without a full build): `cd clients/web && npx prisma generate`.
