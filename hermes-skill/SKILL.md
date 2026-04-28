@@ -29,23 +29,24 @@ Fork of [Decepticon](https://github.com/PurpleAILAB/Decepticon) by PurpleAILAB, 
 ## Quick Start
 
 ```bash
-# Clone and enter
-git clone https://github.com/dazeb/botron.git ~/projects/botron
-cd ~/projects/botron
+# Clone and enter (or use the Hermes tap: hermes skills tap add dazeb/botron)
+cd ~/projects && git clone https://github.com/dazeb/botron.git
+cd botron
 
-# Configure (create .env with at least one API key)
+# Create .env from template
 cp clients/launcher/internal/config/env.example .env
-# Edit .env — set ANTHROPIC_API_KEY, OPENAI_API_KEY, or any provider key
-# Set BOTRON_MODEL_PROFILE=eco (or max, test)
+```
 
-# Add required defaults
-cat >> .env << 'EOF'
+Edit `.env` — set at least one API key (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.) and add these defaults:
+```
 LITELLM_MASTER_KEY=sk-botron-master
 LITELLM_SALT_KEY=sk-botron-salt
 POSTGRES_PASSWORD=botron
 NEO4J_PASSWORD=botron-graph
-EOF
+BOTRON_MODEL_PROFILE=eco
+```
 
+```bash
 # Start all services
 make dev
 # or: docker compose up -d --build
@@ -98,17 +99,14 @@ Launches Metasploitable 2, loads a pre-built engagement, and runs the full kill 
 cd ~/projects/botron
 
 # Python tests (local venv)
-python3 -m venv .venv
-.venv/bin/pip install pydantic pydantic-settings pyyaml pytest httpx "langchain-core>=0.3.0" "langchain-openai>=0.3.0"
-.venv/bin/python -m pytest tests/unit/ -v
-
-# Python tests (in Docker)
-docker compose exec langgraph pip install pytest
-docker compose exec langgraph python -m pytest tests/unit/ -v
+python3 -m venv .venv && .venv/bin/pip install pytest httpx "langchain-core>=0.3.0" "langchain-openai>=0.3.0" pydantic pydantic-settings pyyaml
+.venv/bin/python -m pytest tests/unit/llm/ tests/unit/core/ -v
 
 # Go launcher tests
 cd clients/launcher && go test ./...
 ```
+
+For full test suite (including Docker-dependent tests), run inside the langgraph container after installing pytest there.
 
 ## Architecture
 
