@@ -27,12 +27,15 @@
 <a href="https://github.com/dazeb/botron">
   <img src="https://img.shields.io/badge/Repo-dazeb/botron-181717?logo=github&logoColor=white&style=for-the-badge" alt="GitHub">
 </a>
+<a href="https://github.com/dazeb/botron/blob/main/hermes-skill/SKILL.md">
+  <img src="https://img.shields.io/badge/Hermes-Skill_Pack-8B5CF6?logo=bookstack&logoColor=white&style=for-the-badge" alt="Hermes Skill">
+</a>
 
 </div>
 
 <br/>
 
-> **Botron** is a fork of [Decepticon](https://github.com/PurpleAILAB/Decepticon) by PurpleAILAB, enhanced with multi-provider LLM support and stripped of proprietary Claude Code OAuth dependencies. All model routing is now handled through a single LiteLLM proxy endpoint supporting 10+ AI providers.
+> **Botron** is a fork of [Decepticon](https://github.com/PurpleAILAB/Decepticon) by PurpleAILAB, enhanced with multi-provider LLM support and stripped of proprietary Claude Code OAuth dependencies. All model routing is handled through a single LiteLLM proxy endpoint supporting 12+ AI providers including OpenRouter and local Ollama models.
 
 ---
 
@@ -40,32 +43,37 @@
 
 | Feature | Upstream (Decepticon) | Botron |
 |---------|----------------------|--------|
-| **LLM Providers** | Anthropic-first (Opus/Sonnet/Haiku) | **Multi-provider**: Anthropic, OpenAI, Google, DeepSeek, xAI/Grok, Groq, Together AI, Fireworks, MiniMax, Ollama |
-| **Auth Method** | API keys + Claude Code OAuth subscription | API keys only (clean LiteLLM proxy) |
+| **LLM Providers** | Anthropic-first (Opus/Sonnet/Haiku) | **12+ providers**: Anthropic, OpenAI, Google, DeepSeek, xAI/Grok, Groq, Together AI, Fireworks, MiniMax, **OpenRouter**, **Ollama** (local) |
+| **Model Profiles** | 3 (eco, max, test) | **4** — adds `local` (OpenRouter orchestrator + Ollama tactical agents) |
+| **Auth Method** | API keys + Claude Code OAuth subscription | API keys + OpenRouter (clean LiteLLM proxy) |
 | **Claude Code Handler** | 700-line OAuth spoofing handler | ❌ Removed |
 | **Claude 4 Compat** | Trigger-term substitution for refusal bypass | ❌ Removed |
-| **Model Selection** | Profile + Provider axes | Profile only (`BOTRON_MODEL_PROFILE`) |
+| **Local LLM** | Basic Ollama route | **3 Ollama models** (qwen2.5-7b, qwen3.5-abliterated 9B, gemma4-regular) |
 | **Go Binary** | `decepticon` | `botron` |
+| **Hermes Agent** | — | **Skill pack** — `hermes skills tap add dazeb/botron` |
 
 ---
 
-## Install
+## Quick Start
 
 **Prerequisites**: [Docker](https://docs.docker.com/get-docker/) and Docker Compose v2.
 
 ```bash
 git clone https://github.com/dazeb/botron.git
 cd botron
-make dev       # Start with hot-reload
+
+# Configure
+cp clients/launcher/internal/config/env.example .env
+# Edit .env — add at least one API key (Anthropic, OpenAI, or OpenRouter)
+
+# For free local testing with Ollama (requires GPU):
+#   OLLAMA_API_BASE=http://host.docker.internal:11434
+#   BOTRON_MODEL_PROFILE=local
+#   OPENROUTER_API_KEY=sk-or-...  # needed for orchestrator reasoning
+
+# Start
+make dev       # All services with hot-reload
 make cli       # Interactive CLI (separate terminal)
-```
-
-Or start services directly:
-
-```bash
-docker compose up -d --build
-# Web dashboard at http://localhost:3000
-# LangGraph API at http://localhost:2024
 ```
 
 → **[Full setup guide](docs/getting-started.md)**
@@ -80,43 +88,36 @@ make demo
 
 Launches Metasploitable 2, loads a pre-built engagement, and runs the full kill chain autonomously: port scan → vsftpd exploit → Sliver C2 implant → credential harvesting → internal recon.
 
+> **Demo requires API credits** (OpenRouter or Anthropic) — the orchestrator needs Claude/GPT-level reasoning. Sub-agents can use local Ollama models. See [Model Profiles](#models) below.
+
 ---
 
 ## What is Botron?
 
 The "AI + hacking" space is full of demos that run nmap and print a report. That's not what this is.
 
-**Botron is a professional autonomous Red Team agent.** It executes realistic attack chains — reconnaissance, exploitation, privilege escalation, lateral movement, C2 — the way a real adversary would, not the way a scanner does.
-
-But more importantly: it operates under the discipline that separates red teamers from script kiddies.
+**Botron is a professional autonomous Red Team agent.** It executes realistic attack chains — reconnaissance, exploitation, privilege escalation, lateral movement, C2 — the way a real adversary would, not the way a scanner does. Every action operates inside defined Rules of Engagement.
 
 Before a single packet leaves the wire, Botron generates a complete engagement package:
 
-- **RoE** (Rules of Engagement) — Authorized scope, exclusions, testing window, escalation contacts
+- **RoE** (Rules of Engagement) — Authorized scope, exclusions, testing window
 - **ConOps** (Concept of Operations) — Threat actor profile, methodology, TTPs
-- **Deconfliction Plan** — Source IPs, time windows, shared codes for real-time SOC deconfliction
-- **OPPLAN** (Operations Plan) — Full mission plan with objectives, kill chain phases, and MITRE ATT&CK mapping
-
-Every action operates inside defined rules. The agent doesn't just hack — it runs a professional Red Team operation that happens to be autonomous.
+- **Deconfliction Plan** — Source IPs, time windows, SOC deconfliction
+- **OPPLAN** (Operations Plan) — Full mission plan with MITRE ATT&CK mapping
 
 ---
 
 ## Why Botron?
 
-**Real kill chains, not checkbox scans.**
-Botron reads an OPPLAN and pursues objectives through whatever path opens up — pivoting, adapting, chaining techniques — the way a real attacker would.
+**Real kill chains, not checkbox scans.** Reads an OPPLAN and pursues objectives through whatever path opens up — pivoting, adapting, chaining techniques.
 
-**Interactive shells, actually.**
-Real offensive tools are interactive — `msfconsole`, `sliver-client`, `evil-winrm`. Most AI agents fire one-shot commands and give up. Botron runs every command inside persistent tmux sessions with automatic prompt detection. When a tool drops you into an interactive prompt, the agent sends follow-up commands. No workarounds.
+**Interactive shells.** Runs every command inside persistent tmux sessions with automatic prompt detection. When a tool drops into an interactive prompt (`msfconsole`, `sliver-client`), the agent sends follow-up commands.
 
-**Real infrastructure isolation.**
-All commands run inside a hardened Kali Linux sandbox on a dedicated operational network (`sandbox-net`), fully isolated from management (`botron-net`). LLM gateway, databases, and agent API live on one network; sandbox, C2 server, and targets live on another. Zero cross-network access. The agent controls the sandbox via Docker socket only.
+**Infrastructure isolation.** Hardened Kali Linux sandbox on `sandbox-net`, fully isolated from management (`botron-net`). Zero cross-network access.
 
-**Multi-provider LLM routing.**
-Botron routes all LLM calls through a [LiteLLM](https://github.com/BerriAI/litellm) proxy supporting 10+ AI providers with automatic failover. No vendor lock-in — use Anthropic, OpenAI, Google, DeepSeek, Grok, Groq, Together AI, Fireworks, MiniMax, or local Ollama models interchangeably.
+**Multi-provider LLM routing.** LiteLLM proxy with 12+ providers and automatic failover. Mix and match — OpenRouter for reasoning, Ollama for tactical work.
 
-**Offense serves defense.**
-The [Offensive Vaccine](docs/offensive-vaccine.md) loop turns every finding into a defense improvement — automatically. Attack → defend → verify, at machine speed. This is Step 1 toward infrastructure that hardens itself.
+**Offense serves defense.** The [Offensive Vaccine](docs/offensive-vaccine.md) loop turns every finding into a defense improvement automatically.
 
 ---
 
@@ -128,13 +129,11 @@ Two isolated networks. Management and operations share zero network access.
   <img src="assets/decepticon_infra.svg" alt="Botron Infrastructure" width="680">
 </div>
 
-→ **[Architecture deep dive](docs/architecture.md)**
-
 ---
 
 ## Agents
 
-17 specialist agents organized by kill chain phase. Each agent starts with a fresh context window per objective — no accumulated noise.
+17 specialist agents organized by kill chain phase. Fresh context window per objective — no accumulated noise.
 
 | Phase | Agents |
 |-------|--------|
@@ -145,25 +144,26 @@ Two isolated networks. Management and operations share zero network access.
 | **Defense** | Defender (Offensive Vaccine loop) |
 | **Specialists** | AD Operator, Cloud Hunter, Contract Auditor, Reverser, Analyst |
 
-The vulnerability research pipeline (Scanner → Detector → Verifier → Exploiter → Patcher) handles the full lifecycle from discovery through proof-of-concept to patch proposal.
-
-→ **[Agent details and middleware stack](docs/agents.md)**
+Pipeline: Scanner → Detector → Verifier → Exploiter → Patcher
 
 ---
 
 ## Models
 
-Three profiles via LiteLLM proxy routing to **10+ AI providers**. Each role has a primary model and automatic fallback.
+Four profiles via LiteLLM proxy. Each agent role has a primary model + automatic fallback.
 
-| Profile | Orchestrator | Exploit | Recon | Use case |
-|---------|-------------|---------|-------|---------|
-| **eco** (default) | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | Production |
-| **max** | Opus 4.6 | Opus 4.6 | Sonnet 4.6 | High-value targets |
-| **test** | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | Development / CI |
+| Profile | Orchestrator | Exploit | Recon | Cost |
+|---------|-------------|---------|-------|------|
+| **eco** | Opus 4.6 | Sonnet 4.6 | Haiku 4.5 | $$$ |
+| **max** | Opus 4.6 | Opus 4.6 | Sonnet 4.6 | $$$$ |
+| **test** | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | $ |
+| **local** | Sonnet 4.6 (OpenRouter) | Sonnet 4.6 (OpenRouter) | qwen2.5-7b (Ollama) | $$ |
 
-Set via `BOTRON_MODEL_PROFILE=eco` in your `.env`. Provider outage or rate limit → seamless fallback.
+Set via `BOTRON_MODEL_PROFILE=local` in `.env`. The `local` profile uses:
+- **OpenRouter** for reasoning-heavy roles (botron, exploit, soundwave, vulnresearch)
+- **Ollama** for tactical/scanner roles (recon, scanner, detector, cloud, AD, reverser)
 
-**Supported providers**: Anthropic · OpenAI · Google · DeepSeek · xAI/Grok · Groq · Together AI · Fireworks · MiniMax · Ollama (local)
+**Supported providers**: Anthropic · OpenAI · Google · DeepSeek · xAI/Grok · Groq · Together AI · Fireworks · MiniMax · **OpenRouter** · **Ollama** (local)
 
 → **[Full model reference](docs/models.md)**
 
@@ -174,15 +174,15 @@ Set via `BOTRON_MODEL_PROFILE=eco` in your `.env`. Provider outage or rate limit
 | Topic | Doc |
 |-------|-----|
 | Installation and first engagement | [Getting Started](docs/getting-started.md) |
-| All CLI commands and keyboard shortcuts | [CLI Reference](docs/cli-reference.md) |
+| CLI commands and keyboard shortcuts | [CLI Reference](docs/cli-reference.md) |
 | All `make` targets | [Makefile Reference](docs/makefile-reference.md) |
 | Agent roster and middleware | [Agents](docs/agents.md) |
 | Model profiles and fallback chain | [Models](docs/models.md) |
 | Skill system and format spec | [Skills](docs/skills.md) |
-| Web dashboard features and setup | [Web Dashboard](docs/web-dashboard.md) |
-| System architecture and network isolation | [Architecture](docs/architecture.md) |
+| Web dashboard features | [Web Dashboard](docs/web-dashboard.md) |
+| Architecture and network isolation | [Architecture](docs/architecture.md) |
 | Neo4j knowledge graph | [Knowledge Graph](docs/knowledge-graph.md) |
-| End-to-end engagement workflow | [Engagement Workflow](docs/engagement-workflow.md) |
+| Engagement workflow (RoE → Execution) | [Engagement Workflow](docs/engagement-workflow.md) |
 | Offensive Vaccine loop | [Offensive Vaccine](docs/offensive-vaccine.md) |
 | Contributing to Botron | [Contributing](docs/contributing.md) |
 
@@ -203,7 +203,7 @@ make cli     # Open the interactive CLI (separate terminal)
 
 ## Community
 
-Join the [Discord](https://discord.gg/TZUYsZgrRG) (upstream Decepticon community) — ask questions, share engagement logs, discuss techniques, or just connect with others building at the intersection of offense and defense.
+Join the [Discord](https://discord.gg/TZUYsZgrRG) (upstream Decepticon community) — ask questions, share engagement logs, discuss techniques.
 
 ---
 
@@ -215,7 +215,7 @@ Botron is a fork of [Decepticon](https://github.com/PurpleAILAB/Decepticon) by [
 
 ## Disclaimer
 
-Do not use this project on any system or network without explicit written authorization from the system owner. Unauthorized access to computer systems is illegal. You are solely responsible for your actions. The authors and contributors assume no liability for misuse.
+Do not use this project on any system or network without explicit written authorization from the system owner. Unauthorized access to computer systems is illegal. You are solely responsible for your actions.
 
 ---
 
