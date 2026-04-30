@@ -32,13 +32,16 @@ echo ""
 echo ""
 echo "[STAGE 0] Creating persistent engagement thread..."
 echo ""
-OUTPUT=$("$SCRIPT_DIR/botron-recon.sh" "$TARGET" 2>&1)
-THREAD_ID=$(echo "$OUTPUT" | grep "Thread ID:" | awk '{print $3}')
 
-if [ -z "$THREAD_ID" ]; then
-    echo "ERROR: Could not extract Thread ID from recon output"
-    echo "Raw output:"
-    echo "$OUTPUT"
+# Run recon directly - it saves thread ID to ~/.botron/last-thread-id
+"$SCRIPT_DIR/botron-recon.sh" "$TARGET" 2>&1
+
+# Read back the thread ID
+if [ -f ~/.botron/last-thread-id ]; then
+    THREAD_ID=$(cat ~/.botron/last-thread-id)
+    rm -f ~/.botron/last-thread-id
+else
+    echo "ERROR: Could not find thread ID file"
     exit 1
 fi
 
@@ -56,7 +59,7 @@ echo "[STAGE 2] Exploit: initial access ($VULN)"
 echo ""
 "$SCRIPT_DIR/botron-exploit.sh" -t "$THREAD_ID" "$TARGET" "$VULN"
 
-# -- Stage 3: Post-exploit
+# -- Stage 3: Post-Exploit
 echo ""
 echo "[STAGE 3] Post-Exploit: privilege escalation & credential harvest"
 echo ""

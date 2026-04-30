@@ -69,28 +69,26 @@ curl -s -X POST "$LANGGRAPH_URL/runs/stream" \
         \"input\": {
             \"messages\": [{
                 \"role\": \"user\",
-                \"content\": \"nmap scan $TARGET -p-\"
-            }],
-            \"stream_mode\": \"values\"
-        }
-    }" | while IFS= read -r line; do
-    # Pretty-print SSE events
-    if [[ "$line" == event:* ]]; then
-        EVENT="${line#event: }"
-        printf "\n[EVENT: %s]\n" "$EVENT"
-    elif [[ "$line" == data:* ]]; then
-        DATA="${line#data: }"
-        # Try to pretty-print JSON
-        if command -v jq >/dev/null 2>&1; then
-            echo "$DATA" | jq -c . 2>/dev/null || echo "$DATA"
-        else
-            echo "$DATA"
-        fi
-    fi
-done
+                \"content\": \"Perform a full port scan on $TARGET. Enumerate services and versions. Store results in the knowledge graph.\"
+            }]
+        },
+        \"stream_mode\": [\"values\"]
+    }" | python3 -c "
+import sys, json
+for line in sys.stdin:
+    line = line.strip()
+    if line.startswith('event:'): print(f'\n[EVENT {line[6:].strip()}]'); continue
+    if line.startswith('data:'):
+        try: data=json.loads(line[5:].strip()); print(json.dumps(data, indent=2)[:2000])
+        except: print(line[:500])
+"
 
 echo ""
 echo "=== Recon complete ==="
 echo "Thread ID: $THREAD_ID"
 echo "View logs: docker compose logs -f langgraph"
 echo "Neo4j graph: http://localhost:7474"
+
+# Save thread ID for downstream scripts
+mkdir -p ~/.botron 2>/dev/null
+echo "$THREAD_ID" > ~/.botron/last-thread-id
