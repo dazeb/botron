@@ -60,16 +60,43 @@ model_list:
       api_base: https://api.minimax.io/v1
       api_key: os.environ/MINIMAX_API_KEY
 
-  # ── DeepSeek ─────────────────────────────────────────────────────────
+# ── Nous Portal (via Hermes Agent auth) ──────────────────────────────
+  - model_name: nous/deepseek-v4-pro
+    litellm_params:
+      model: deepseek/deepseek-v4-pro
+      api_base: https://inference-api.nousresearch.com/v1
+      api_key: os.environ/NOUS_API_KEY
+
+  - model_name: nous/deepseek-v4-flash
+    litellm_params:
+      model: deepseek/deepseek-v4-flash
+      api_base: https://inference-api.nousresearch.com/v1
+      api_key: os.environ/NOUS_API_KEY
+
+  - model_name: nous/claude-sonnet-latest
+    litellm_params:
+      model: anthropic/claude-sonnet-latest
+      api_base: https://inference-api.nousresearch.com/v1
+      api_key: os.environ/NOUS_API_KEY
+
+  - model_name: nous/gpt-latest
+    litellm_params:
+      model: openai/gpt-latest
+      api_base: https://inference-api.nousresearch.com/v1
+      api_key: os.environ/NOUS_API_KEY
+
+  # ── DeepSeek (direct API) ────────────────────────────────────────────
   - model_name: deepseek/deepseek-chat
     litellm_params:
       model: deepseek/deepseek-chat
       api_key: os.environ/DEEPSEEK_API_KEY
+      api_base: https://api.deepseek.com/v1
 
   - model_name: deepseek/deepseek-reasoner
     litellm_params:
       model: deepseek/deepseek-reasoner
       api_key: os.environ/DEEPSEEK_API_KEY
+      api_base: https://api.deepseek.com/v1
 
   # ── xAI / Grok ───────────────────────────────────────────────────────
   - model_name: xai/grok-4

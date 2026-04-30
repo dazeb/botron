@@ -111,6 +111,25 @@ class LLMFactory:
 
     def _create_chat_model(self, model: str, temperature: float) -> BaseChatModel:
         """Create a ChatOpenAI instance routed through LiteLLM proxy."""
+        import os
+
+        # Nous Portal direct routing (bypasses LiteLLM proxy)
+        NOUS_MODEL_MAP = {
+            "nous/deepseek-v4-pro": "deepseek/deepseek-v4-pro",
+            "nous/deepseek-v4-flash": "deepseek/deepseek-v4-flash",
+            "nous/claude-sonnet-latest": "anthropic/claude-sonnet-latest",
+            "nous/gpt-latest": "openai/gpt-latest",
+        }
+        if model in NOUS_MODEL_MAP:
+            return ChatOpenAI(
+                model=NOUS_MODEL_MAP[model],
+                base_url="https://inference-api.nousresearch.com/v1",
+                api_key=os.environ.get("NOUS_API_KEY", ""),
+                temperature=temperature,
+                timeout=self._proxy.timeout,
+                max_retries=self._proxy.max_retries,
+            )
+
         return ChatOpenAI(
             model=model,
             base_url=self._proxy.url,

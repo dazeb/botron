@@ -50,6 +50,8 @@ class ModelProfile(StrEnum):
     ECO = "eco"
     MAX = "max"
     TEST = "test"
+    NOUS = "nous"
+    DEEPSEEK = "deepseek"
     LOCAL = "local"
 
 
@@ -68,6 +70,12 @@ OLLAMA_GEMMA = "ollama/gemma4-regular"
 OLLAMA_QWEN35 = "ollama/qwen3.5-abliterated"
 OR_SONNET = "openrouter/anthropic/claude-sonnet-4-6"
 OR_HAIKU = "openrouter/anthropic/claude-haiku-4-5"
+NOUS_DS_PRO = "nous/deepseek-v4-pro"
+NOUS_DS_FLASH = "nous/deepseek-v4-flash"
+NOUS_SONNET = "nous/claude-sonnet-latest"
+NOUS_GPT = "nous/gpt-latest"
+DS_CHAT = "deepseek/deepseek-chat"
+DS_REASONER = "deepseek/deepseek-reasoner"
 
 
 class ProxyConfig(BaseModel):
@@ -337,6 +345,99 @@ class LLMModelMapping(BaseModel):
                 verifier=ModelAssignment(primary=HAIKU, temperature=0.2),
                 patcher=ModelAssignment(primary=HAIKU, temperature=0.2),
                 exploiter=ModelAssignment(primary=HAIKU, temperature=0.2),
+            )
+
+        # ── Nous Portal profile ──────────────────────────────────────────
+        # DeepSeek V4 Pro via Nous inference gateway. Verified tool-calling
+        # support. Uses Nous Portal auth (Hermes agent_key). Falls back to
+        # Nous Claude Sonnet for reliability.
+        if profile == ModelProfile.NOUS:
+            return cls(
+                botron=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.4,
+                ),
+                soundwave=ModelAssignment(
+                    primary=NOUS_DS_FLASH,
+                    fallback=NOUS_SONNET,
+                    temperature=0.4,
+                ),
+                exploit=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_DS_FLASH,
+                    temperature=0.3,
+                ),
+                analyst=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
+                reverser=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
+                contract_auditor=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
+                cloud_hunter=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_DS_FLASH,
+                    temperature=0.2,
+                ),
+                ad_operator=ModelAssignment(
+                    primary=NOUS_DS_FLASH,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
+                recon=ModelAssignment(
+                    primary=NOUS_DS_FLASH,
+                    fallback=NOUS_DS_PRO,
+                    temperature=0.3,
+                ),
+                postexploit=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_DS_FLASH,
+                    temperature=0.3,
+                ),
+                defender=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
+                vulnresearch=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.4,
+                ),
+                scanner=ModelAssignment(
+                    primary=NOUS_DS_FLASH,
+                    fallback=NOUS_DS_PRO,
+                    temperature=0.2,
+                ),
+                detector=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_DS_FLASH,
+                    temperature=0.2,
+                ),
+                verifier=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_DS_FLASH,
+                    temperature=0.2,
+                ),
+                patcher=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
+                exploiter=ModelAssignment(
+                    primary=NOUS_DS_PRO,
+                    fallback=NOUS_SONNET,
+                    temperature=0.2,
+                ),
             )
 
         if profile == ModelProfile.LOCAL:
