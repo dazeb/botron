@@ -178,7 +178,7 @@ The `local` profile uses:
 
 ### Nous Portal (DeepSeek V4)
 
-The `nous` profile routes all agent traffic through [Nous Portal](https://nousresearch.com/) using your existing Hermes Agent `agent_key`. No separate DeepSeek API key required.
+The `nous` profile routes all agent traffic through [Nous Portal](https://nousresearch.com/) using your existing [Hermes Agent](https://github.com/NousResearch/hermes-agent) `agent_key` by Nous Research. No separate DeepSeek API key required.
 
 **Setup:**
 ```bash
@@ -293,6 +293,8 @@ Join the [Discord](https://discord.gg/TZUYsZgrRG) (upstream Decepticon community
 ## Credits
 
 Botron is a fork of [Decepticon](https://github.com/PurpleAILAB/Decepticon) by [PurpleAILAB](https://github.com/PurpleAILAB). All credit for the original autonomous red team architecture, 17-agent orchestration system, hardened Kali sandbox, and Offensive Vaccine concept goes to the Decepticon team.
+
+The [Nous Portal](https://nousresearch.com/) `nous` model profile and [Hermes Agent](https://github.com/NousResearch/hermes-agent) integration are powered by [Nous Research](https://nousresearch.com/).
 
 ---
 
