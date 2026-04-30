@@ -43,9 +43,9 @@
 
 | Feature | Upstream (Decepticon) | Botron |
 |---------|----------------------|--------|
-| **LLM Providers** | Anthropic-first (Opus/Sonnet/Haiku) | **12+ providers**: Anthropic, OpenAI, Google, DeepSeek, xAI/Grok, Groq, Together AI, Fireworks, MiniMax, **OpenRouter**, **Ollama** (local) |
-| **Model Profiles** | 3 (eco, max, test) | **4** — adds `local` (OpenRouter orchestrator + Ollama tactical agents) |
-| **Auth Method** | API keys + Claude Code OAuth subscription | API keys + OpenRouter (clean LiteLLM proxy) |
+| **LLM Providers** | Anthropic-first (Opus/Sonnet/Haiku) | **12+ providers**: Anthropic, OpenAI, Google, DeepSeek, xAI/Grok, Groq, Together AI, Fireworks, MiniMax, **OpenRouter**, **Ollama** (local), **Nous Portal** |
+| **Model Profiles** | 3 (eco, max, test) | **5** — adds `local` (OpenRouter + Ollama) and `nous` (DeepSeek V4 via Nous Portal) |
+| **Auth Method** | API keys + Claude Code OAuth subscription | API keys + OpenRouter + Nous (Hermes agent_key) + Ollama (local) |
 | **Claude Code Handler** | 700-line OAuth spoofing handler | ❌ Removed |
 | **Claude 4 Compat** | Trigger-term substitution for refusal bypass | ❌ Removed |
 | **Local LLM** | Basic Ollama route | **3 Ollama models** (qwen2.5-7b, qwen3.5-abliterated 9B, gemma4-regular) |
@@ -64,12 +64,16 @@ cd botron
 
 # Configure
 cp clients/launcher/internal/config/env.example .env
-# Edit .env — add at least one API key (Anthropic, OpenAI, or OpenRouter)
+# Edit .env — add at least one API key (Anthropic, OpenAI, OpenRouter, or Nous)
 
+# For Nous Portal (DeepSeek V4) via Hermes Agent:
+#   BOTRON_MODEL_PROFILE=nous
+#   NOUS_API_KEY=sk-nous-...          # from ~/.hermes/auth.json
+#
 # For free local testing with Ollama (requires GPU):
 #   OLLAMA_API_BASE=http://host.docker.internal:11434
 #   BOTRON_MODEL_PROFILE=local
-#   OPENROUTER_API_KEY=sk-or-...  # needed for orchestrator reasoning
+#   OPENROUTER_API_KEY=sk-or-...      # needed for orchestrator reasoning
 
 # Start
 make dev       # All services with hot-reload
@@ -158,14 +162,93 @@ Four profiles via LiteLLM proxy. Each agent role has a primary model + automatic
 | **max** | Opus 4.6 | Opus 4.6 | Sonnet 4.6 | $$$$ |
 | **test** | Haiku 4.5 | Haiku 4.5 | Haiku 4.5 | $ |
 | **local** | Sonnet 4.6 (OpenRouter) | Sonnet 4.6 (OpenRouter) | qwen2.5-7b (Ollama) | $$ |
+| **nous** | DeepSeek V4 Pro (Nous) | DeepSeek V4 Flash (Nous) | DeepSeek V4 Flash (Nous) | $ |
 
-Set via `BOTRON_MODEL_PROFILE=local` in `.env`. The `local` profile uses:
+Set via `BOTRON_MODEL_PROFILE=nous` in `.env`. The `nous` profile uses:
+- **Nous Portal** (`inference-api.nousresearch.com/v1`) for all agent roles
+- **DeepSeek V4 Flash** as primary (fast, cheap, tool-calling enabled)
+- **DeepSeek V4 Pro** as fallback (higher reasoning quality)
+- Authenticates via your Hermes Agent `agent_key` — no separate DeepSeek API key needed
+
+The `local` profile uses:
 - **OpenRouter** for reasoning-heavy roles (botron, exploit, soundwave, vulnresearch)
 - **Ollama** for tactical/scanner roles (recon, scanner, detector, cloud, AD, reverser)
 
-**Supported providers**: Anthropic · OpenAI · Google · DeepSeek · xAI/Grok · Groq · Together AI · Fireworks · MiniMax · **OpenRouter** · **Ollama** (local)
+**Supported providers**: Anthropic · OpenAI · Google · DeepSeek · xAI/Grok · Groq · Together AI · Fireworks · MiniMax · **OpenRouter** · **Ollama** (local) · **Nous Portal**
 
-→ **[Full model reference](docs/models.md)**
+### Nous Portal (DeepSeek V4)
+
+The `nous` profile routes all agent traffic through [Nous Portal](https://nousresearch.com/) using your existing Hermes Agent `agent_key`. No separate DeepSeek API key required.
+
+**Setup:**
+```bash
+# 1. Grab your agent_key from Hermes auth
+cat ~/.hermes/auth.json | jq -r '.agent_key'
+
+# 2. Add to .env
+NOUS_API_KEY=sk-nous-your-key-here
+BOTRON_MODEL_PROFILE=nous
+
+# 3. Restart containers
+docker compose up -d
+```
+
+**How it works:**
+- `botron/llm/factory.py` detects `nous/*` model names and bypasses the LiteLLM proxy, routing directly to `https://inference-api.nousresearch.com/v1`
+- `botron/llm/models.py` maps the `nous` profile to DeepSeek V4 Flash (primary) and V4 Pro (fallback)
+- All 16 agent roles get tool-calling enabled models — confirmed `finish_reason: "tool_calls"` on recon, scanner, exploit, and post-exploit stages
+
+## Running a Killchain
+
+Botron includes POSIX shell scripts in `scripts/` for manual killchain execution against a target. All stages share a persistent thread ID (engagement state).
+
+### Prerequisites
+- Docker Compose services running: `docker compose up -d`
+- LangGraph health: `curl http://localhost:2024/ok` → `{"ok":true}`
+- LiteLLM health: `curl http://localhost:4000/health/readiness`
+- A valid model profile in `.env` (`eco`, `max`, `test`, `local`, or `nous`)
+
+### Individual Stages
+
+| Stage | Script | Purpose |
+|-------|--------|---------|
+| Recon | `./scripts/botron-recon.sh [TARGET]` | Port discovery, service enumeration |
+| Scanner | `./scripts/botron-scanner.sh -t THREAD_ID [TARGET] [SERVICE]` | Vulnerability detection |
+| Exploit | `./scripts/botron-exploit.sh -t THREAD_ID [TARGET] [VULN]` | Initial access |
+| Post-Exploit | `./scripts/botron-postexploit.sh -t THREAD_ID [HOST]` | Privesc, credential harvest, lateral movement |
+
+### Full Killchain (One Command)
+
+```bash
+./scripts/botron-killchain.sh [TARGET] [VULN] [SERVICE]
+```
+
+**Example against Metasploitable 2:**
+```bash
+cd ~/projects/botron
+./scripts/botron-killchain.sh 192.168.8.203 vsftpd-3.0.3-backdoor ftp
+```
+
+This executes:
+1. **Recon** → creates engagement thread, runs nmap port scan
+2. **Scanner** → detects FTP anonymous login / vsftpd backdoor
+3. **Exploit** → gains initial access via vsftpd backdoor
+4. **Post-Exploit** → privilege escalation & credential extraction
+
+All output streams live. Each stage passes the same `thread_id` so the knowledge graph accumulates state across the full chain.
+
+### Monitoring
+
+```bash
+# Live logs
+docker compose logs -f langgraph
+
+# Knowledge graph (Neo4j)
+open http://localhost:7474
+
+# Thread state
+curl http://localhost:2024/threads/$THREAD_ID | jq
+```
 
 ---
 
