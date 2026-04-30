@@ -140,9 +140,9 @@ logs:
 
 ## Health checks: KG backend + Neo4j + Web (parity with `decepticon health`).
 health:
-	@$(COMPOSE) exec -T langgraph python -m decepticon.tools.research.health >/dev/null 2>&1 \
+	@$(COMPOSE) exec -T langgraph python -m botron.tools.research.health >/dev/null 2>&1 \
 		&& echo "kg:    OK" || (echo "kg:    FAIL" && exit 1)
-	@$(COMPOSE) exec -T neo4j cypher-shell -u neo4j -p "$${NEO4J_PASSWORD:-decepticon-graph}" "RETURN 1 AS ok;" >/dev/null 2>&1 \
+	@$(COMPOSE) exec -T neo4j cypher-shell -u neo4j -p "botron-graph" "RETURN 1 AS ok;" >/dev/null 2>&1 \
 		&& echo "neo4j: OK" || (echo "neo4j: FAIL" && exit 1)
 	@curl -sf http://localhost:$${WEB_PORT:-3000} >/dev/null 2>&1 \
 		&& echo "web:   OK (http://localhost:$${WEB_PORT:-3000})" \
@@ -215,7 +215,7 @@ web-install:
 web-db-ensure:
 	@echo "[web-db-ensure] Waiting for PostgreSQL..."
 	@for i in 1 2 3 4 5 6 7 8 9 10; do \
-		docker exec botron-postgres pg_isready -U decepticon -q 2>/dev/null && break; \
+		docker exec botron-postgres pg_isready -U botron -q 2>/dev/null && break; \
 		sleep 1; \
 	done
 	@cd $(WEB_DIR) && npx prisma migrate deploy 2>&1 | tail -1

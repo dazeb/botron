@@ -341,10 +341,10 @@ class LLMModelMapping(BaseModel):
 
         if profile == ModelProfile.LOCAL:
             return cls(
-                botron=ModelAssignment(primary=OR_SONNET, temperature=0.4, max_tokens=4096),
-                soundwave=ModelAssignment(primary=OR_HAIKU, temperature=0.4, max_tokens=4096),
-                exploit=ModelAssignment(primary=OR_SONNET, temperature=0.3, max_tokens=4096),
-                analyst=ModelAssignment(primary=OR_HAIKU, temperature=0.2, max_tokens=4096),
+                botron=ModelAssignment(primary=OLLAMA_QWEN35, temperature=0.4, max_tokens=4096),
+                soundwave=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.4, max_tokens=4096),
+                exploit=ModelAssignment(primary=OLLAMA_QWEN35, temperature=0.3, max_tokens=4096),
+                analyst=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2, max_tokens=4096),
                 reverser=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 contract_auditor=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
                 cloud_hunter=ModelAssignment(primary=OLLAMA_QWEN, temperature=0.2),
