@@ -90,5 +90,6 @@ echo "View logs: docker compose logs -f langgraph"
 echo "Neo4j graph: http://localhost:7474"
 
 # Save thread ID for downstream scripts
-mkdir -p ~/.botron 2>/dev/null
-echo "$THREAD_ID" > ~/.botron/last-thread-id
+mkdir -p /tmp/botron 2>/dev/null
+chmod 777 /tmp/botron 2>/dev/null
+echo "$THREAD_ID" > /tmp/botron/last-thread-id

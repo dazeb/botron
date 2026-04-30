@@ -37,9 +37,9 @@ echo ""
 "$SCRIPT_DIR/botron-recon.sh" "$TARGET" 2>&1
 
 # Read back the thread ID
-if [ -f ~/.botron/last-thread-id ]; then
-    THREAD_ID=$(cat ~/.botron/last-thread-id)
-    rm -f ~/.botron/last-thread-id
+if [ -f /tmp/botron/last-thread-id ]; then
+    THREAD_ID=$(cat /tmp/botron/last-thread-id)
+    rm -f /tmp/botron/last-thread-id
 else
     echo "ERROR: Could not find thread ID file"
     exit 1
